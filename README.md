@@ -58,7 +58,7 @@ npm start
 
 项目包含 Vercel Functions 入口（`api/start.js`、`api/status.js`），前端静态资源由 `public/` 提供。Vercel 部署使用 Upstash Redis 实现跨函数实例的每 IP 滚动窗口限流；需在 Vercel Marketplace 为项目连接 Upstash Redis，并配置 `DIFY_API_KEY`、`ACCESS_CODE`。Redis 集成提供的 REST URL/token 环境变量名称应为 `UPSTASH_REDIS_REST_URL` 和 `UPSTASH_REDIS_REST_TOKEN`。
 
-部署步骤：在 Vercel 导入 GitHub 仓库，框架预设选择 Other（或接受自动识别），根目录保持仓库根目录，不填写 Build Command、Output Directory；连接 Upstash Redis，设置环境变量后部署。生产环境部署完成后用网页口令测试生成与状态轮询。
+部署步骤：在 Vercel 导入 GitHub 仓库，根目录保持仓库根目录，不填写 Build Command、Output Directory；连接 Upstash Redis，设置环境变量后部署。`vercel.json` 固定使用 Other 预设，让 `public/` 作为静态页面、`api/` 作为云函数，避免把本地 `server.mjs` 当作线上入口。生产环境部署完成后用网页口令测试生成与状态轮询。
 
 ## 本地或 Docker 部署
 
