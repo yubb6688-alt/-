@@ -54,9 +54,15 @@ npm start
 
 任一 verdict 为“转人工”时只显示原因，不展示内容。自动通过时显示所有文案和返回的素材；外层素材 URL 优先，内层作为补充。所有动态文字通过 `textContent` 写入，不解析 HTML；媒体只允许 HTTP/HTTPS 地址。HTTPS 上线时应让 Dify 输出 HTTPS 素材链接。素材跨域和外链访问策略由素材托管方决定。
 
-## 部署（本次仅上传代码）
+## 部署到 Vercel
 
-GitHub 保存源码，不能直接运行这个 Node 服务；GitHub Pages 不适用。以后可部署到 Node 运行平台或服务器，启动命令为 `npm start`，绑定平台提供的 `PORT`，在平台环境变量中配置两个密钥。将 `.data` 挂载到持久磁盘，并通过 HTTPS 反向代理提供访问。
+项目包含 Vercel Functions 入口（`api/start.js`、`api/status.js`），前端静态资源由 `public/` 提供。Vercel 部署使用 Upstash Redis 实现跨函数实例的每 IP 滚动窗口限流；需在 Vercel Marketplace 为项目连接 Upstash Redis，并配置 `DIFY_API_KEY`、`ACCESS_CODE`。Redis 集成提供的 REST URL/token 环境变量名称应为 `UPSTASH_REDIS_REST_URL` 和 `UPSTASH_REDIS_REST_TOKEN`。
+
+部署步骤：在 Vercel 导入 GitHub 仓库，框架预设选择 Other（或接受自动识别），根目录保持仓库根目录，不填写 Build Command、Output Directory；连接 Upstash Redis，设置环境变量后部署。生产环境部署完成后用网页口令测试生成与状态轮询。
+
+## 本地或 Docker 部署
+
+本地和 Docker 使用常驻 Node 服务及 SQLite 限流存储。部署到普通 Node 运行平台或服务器时，启动命令为 `npm start`，绑定平台提供的 `PORT`，在平台环境变量中配置两个密钥。将 `.data` 挂载到持久磁盘，并通过 HTTPS 反向代理提供访问。
 
 也可使用附带的 Dockerfile：
 
