@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#254f39"><meta name="description" content="选好商品，写下人群，让灵感长成好内容。种草助手，一站生成多平台商品内容。">
+  <title>种草助手 · 让好物，被看见</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><a href="/" class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>种草助手<span class="brand-en">CONTENT STUDIO</span></span></a><span class="header-note"><i></i> 好内容，从一个想法开始</span></header>
+  <main>
+    <section class="intro"><div><div class="eyebrow">LESS BLANK PAGES. MORE GOOD STORIES.</div><h1>让好物，<span>被看见。</span><span class="hero-star" aria-hidden="true">✳</span></h1><p>选一件好物，描述你的受众。把种草灵感，变成一整套内容。</p></div><div class="intro-aside"><span>灵感输入</span><span class="line-arrow">⟶</span><span>内容生长</span><small>文案 / 配图 / 视频</small></div></section>
+    <div class="workspace">
+      <section class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">01 / 创作需求</span><h2 id="brief-title">先说说，这次种什么草？</h2></div><span class="tiny-spark" aria-hidden="true">✧</span></div>
+        <form id="generate-form">
+          <fieldset id="form-fields">
+            <div class="form-row"><div class="field"><label for="product">商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11"></div></div>
+            <div class="field"><div class="label-row"><label for="audience">目标人群 <span class="required">*</span></label><span id="audience-count" class="count">0 / 60</span></div><textarea id="audience" name="audience" rows="3" maxlength="60" required placeholder="例如：养猫的小户型上班族，想轻松打理毛发，又在意家居颜值。" aria-describedby="audience-hint"></textarea><p id="audience-hint" class="hint">越具体，内容越懂你的受众。</p></div>
+            <div class="field"><label for="want">要什么 <span class="required">*</span></label><select id="want" name="want"><option>文案 + 配图 + 视频</option><option>文案 + 配图</option><option>只要文案</option></select></div>
+            <div class="field"><div class="label-row"><label for="shot">视频镜头要求 <span class="optional">选填</span></label><span id="shot-count" class="count">0 / 500</span></div><textarea id="shot" name="shot" rows="3" maxlength="500" placeholder="例如：阳光客厅开场，特写地面猫毛，再切到清洁过程；整体自然、生活化。"></textarea></div>
+            <div class="field access-field"><label for="access-code">访问口令 <span class="required">*</span></label><div class="password-wrap"><span aria-hidden="true">⌑</span><input id="access-code" name="access" type="password" required placeholder="输入你的创作口令" autocomplete="off"></div></div>
+            <button id="generate-button" type="submit"><span aria-hidden="true">✧</span><span id="button-label">生成内容</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+          </fieldset>
+          <p class="form-footnote">好内容值得等一会儿，最多需要 6 分钟</p>
+        </form>
+      </section>
+      <section class="output panel" aria-labelledby="output-title"><div class="section-heading"><div><span class="step-label">02 / 创作结果</span><h2 id="output-title">你的下一篇好内容</h2></div><span id="status-badge" class="badge">等待灵感</span></div>
+        <div id="state-message" aria-live="polite"></div>
+        <div id="empty-state" class="empty-state"><div class="art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="art-spark spark-one">✧</div><div class="art-spark spark-two">✳</div><div class="paper paper-back"><div></div><div></div><div></div></div><div class="paper paper-front"><span class="paper-pill">一点灵感</span><div class="sprout"><i class="stem"></i><i class="leaf leaf-left"></i><i class="leaf leaf-right"></i></div><div class="paper-line"></div><div class="paper-line short"></div></div><div class="art-label">让好内容，自然生长</div></div><h3>种下一个想法，<br>收获一整套内容。</h3><p>填好左侧需求，剩下的交给种草助手。<br>每一份内容，都会经过自动审核。</p><div class="output-types"><span>小红书笔记</span><span>抖音口播</span><span>详情页首屏</span></div></div>
+        <div id="progress-state" class="progress-state" hidden><div class="loading-sprout" aria-hidden="true">✳</div><h3>灵感正在生长中</h3><p>正在生成并审核你的内容，请稍候。</p><div class="elapsed"><strong id="elapsed">0</strong><span>秒 · 已等待</span></div><progress id="time-progress" max="360" value="0" aria-label="已等待时间"></progress><p class="hint">每 5 秒更新一次状态，最多等待 6 分钟</p></div>
+        <div id="results" hidden></div>
+        <div class="output-bottom"><span class="small-leaf" aria-hidden="true">✳</span> 为真实的生活，写有温度的内容 <span>✦</span></div>
+      </section>
+    </div>
+    <footer><span>种草助手 <span class="footer-dot">·</span> 让创作轻一点</span><span>一份灵感，多种表达。</span></footer>
+  </main>
+</body>
+</html>
