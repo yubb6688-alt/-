@@ -102,3 +102,15 @@ test('seventh start gets 429 and Retry-After without an upstream call', async ()
     assert.equal(response.status, 429); assert.ok(Number(response.headers.get('Retry-After')) > 0); assert.equal(calls, 6);
   } finally { limiter.close(); }
 });
+
+test('limiter failure refuses generation with a retryable response and no upstream call', async () => {
+  const response = await handleApi(request(), {
+    ...context(() => assert.fail('Dify must not be called without rate limiting')),
+    limiter: { take: async () => { throw new Error('Redis unavailable: private details'); } },
+  });
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get('Retry-After'), '5');
+  const body = await response.text();
+  assert.match(body, /尚未提交生成任务/);
+  assert.equal(body.includes('private details'), false);
+});

@@ -15,6 +15,7 @@ const assets = new Map([
   ['/liquid-metal.js', ['liquid-metal.js', 'text/javascript; charset=utf-8']],
   ['/hero-liquid-reference.png', ['hero-liquid-reference.png', 'image/png']],
   ['/hero-liquid-cover.webp', ['hero-liquid-cover.webp', 'image/webp']],
+  ['/hero-liquid-cover.jpg', ['hero-liquid-cover.jpg', 'image/jpeg']],
   ['/logo.svg', ['logo.svg', 'image/svg+xml']],
   ['/sprout.svg', ['sprout.svg', 'image/svg+xml']],
 ]);

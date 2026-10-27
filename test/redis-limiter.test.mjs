@@ -43,3 +43,20 @@ test('Redis limiter rejects missing configuration and failed upstream responses'
     fetcher: async () => new Response('', { status: 500 }),
   }).take('203.0.113.4'), /request failed/);
 });
+
+test('Redis deadline aborts a stalled connection or response body instead of hanging', async () => {
+  for (const stage of ['connection', 'body']) {
+    let signal;
+    const limiter = createRedisLimiter({
+      env: { UPSTASH_REDIS_REST_URL: 'https://redis.example', UPSTASH_REDIS_REST_TOKEN: 'secret' },
+      timeoutMs: 10,
+      fetcher: async (_url, options) => {
+        signal = options.signal;
+        const blocked = () => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('Redis deadline exceeded')), { once: true }));
+        return stage === 'connection' ? blocked() : { ok: true, json: blocked };
+      },
+    });
+    await assert.rejects(limiter.take('203.0.113.4'), /deadline exceeded/);
+    assert.equal(signal.aborted, true);
+  }
+});

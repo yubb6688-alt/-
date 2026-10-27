@@ -105,12 +105,29 @@ async function api(path, code, job, options = {}) {
   const controller = new AbortController();
   const cancel = () => controller.abort();
   job.controller.signal.addEventListener('abort', cancel, { once: true });
-  const timeout = setTimeout(cancel, options.method === 'POST' ? 35000 : 20000);
+  const timeout = setTimeout(cancel, options.method === 'POST' ? 45000 : 20000);
   try {
-    const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', 'X-Access-Code': code }, signal: controller.signal });
+    let response;
+    try {
+      response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', 'X-Access-Code': code }, signal: controller.signal });
+    } catch (error) {
+      error.retryable = true;
+      error.networkFailure = true;
+      throw error;
+    }
+    const retryableStatus = [408, 429, 500, 502, 503, 504].includes(response.status);
     let data;
-    try { data = await response.json(); } catch { throw new Error('服务响应异常，请稍后重试。'); }
-    if (!response.ok) throw new Error(data.error || `请求失败（${response.status}）`);
+    try { data = await response.json(); } catch (cause) {
+      const error = new Error('服务响应异常，请稍后重试。');
+      error.retryable = retryableStatus || cause.name === 'AbortError' || cause.name === 'TypeError';
+      error.networkFailure = cause.name === 'AbortError' || cause.name === 'TypeError';
+      throw error;
+    }
+    if (!response.ok) {
+      const error = new Error(data.error || `请求失败（${response.status}）`);
+      error.retryable = retryableStatus;
+      throw error;
+    }
     return data;
   } finally { clearTimeout(timeout); job.controller.signal.removeEventListener('abort', cancel); }
 }
@@ -120,7 +137,7 @@ form.addEventListener('submit', async event => {
   if (!$('audience').value.trim()) { $('audience').setCustomValidity('请填写目标人群，不能只输入空格。'); $('audience').reportValidity(); return; }
   const payload = Object.fromEntries(['product', 'campaign', 'audience', 'want', 'shot'].map(key => [key, $(key).value.trim()]));
   const code = $('access-code').value;
-  const job = { start: Date.now(), controller: new AbortController(), polling: false };
+  const job = { start: Date.now(), controller: new AbortController(), polling: false, retries: 0, nextPollAt: 0 };
   active = job;
   $('form-fields').disabled = true; $('button-label').textContent = '正在生成…';
   $('state-message').replaceChildren(); $('results').replaceChildren(); $('results').hidden = true;
@@ -146,7 +163,9 @@ form.addEventListener('submit', async event => {
   const fail = error => {
     if (active !== job) return;
     stop(job); badge('生成未完成', 'warning');
-    notice('这次没能完成生成', error.name === 'AbortError' ? '服务连接超时，请稍后重试。' : error.message);
+    notice('这次没能完成生成', error.networkFailure
+      ? '连接中断，暂时无法确认任务状态。后台可能仍在处理，请先联系管理员确认，避免重复生成。'
+      : error.message);
   };
   try {
     const { id } = await api('/api/start', code, job, { method: 'POST', body: JSON.stringify(payload) });
@@ -155,15 +174,28 @@ form.addEventListener('submit', async event => {
     job.poll = setInterval(async () => {
       if (active !== job || job.polling) return;
       if (Date.now() - job.start >= 360000) { expire(); return; }
+      if (Date.now() < job.nextPollAt) return;
       job.polling = true;
       try {
         const data = await api(`/api/status?id=${encodeURIComponent(id)}`, code, job);
         if (active !== job) return;
         if (Date.now() - job.start >= 360000) { expire(); return; }
+        if (job.retries) { $('state-message').replaceChildren(); badge('正在生成'); }
+        job.retries = 0; job.nextPollAt = 0;
         if (data.status === 'succeeded') { renderOutputs(data.outputs, payload.want); stop(job); }
         else if (['failed', 'stopped', 'partial-succeeded', 'paused'].includes(data.status)) throw new Error(text(data.error) || '工作流未完成，请联系管理员检查。');
         else if (!['running', 'pending', 'queued'].includes(data.status)) throw new Error('服务返回了未知任务状态，请联系管理员。');
-      } catch (error) { fail(error); }
+      } catch (error) {
+        if (active !== job) return;
+        if (Date.now() - job.start >= 360000) { expire(); return; }
+        if (error.retryable) {
+          // Retry only the read-only status request, never POST /api/start.
+          const delay = Math.min(5000 * 2 ** Math.min(job.retries++, 3), 30000);
+          job.nextPollAt = Date.now() + delay;
+          badge('正在重连', 'warning');
+          notice('连接暂时中断', `将在 ${delay / 1000} 秒后自动继续查询，请保持页面打开。不会重复提交生成任务。`);
+        } else fail(error);
+      }
       finally { job.polling = false; }
     }, 5000);
   } catch (error) { fail(error); }

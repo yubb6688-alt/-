@@ -86,3 +86,63 @@ test('poll success stops all timers, and a duplicate submit does not create a se
   assert.equal(ui.get('studio-visual').hidden, false);
   assert.equal(ui.get('results').hidden, true);
 });
+
+test('temporary network failures back off and recover the same run without a second POST', async () => {
+  const ui = setup(); let starts = 0, polls = 0;
+  ui.get('audience').value = '上班族'; ui.get('want').value = '只要文案';
+  ui.context.fetch = async path => {
+    if (path === '/api/start') { starts++; return { ok: true, json: async () => ({ id: 'run-original' }) }; }
+    assert.equal(path, '/api/status?id=run-original');
+    if (++polls <= 2) throw new TypeError('Network connection lost');
+    return { ok: true, json: async () => ({ status: 'succeeded', outputs: { result: '{"verdict":"自动通过"}' } }) };
+  };
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  const poll = [...ui.timers.values()].find(t => t.ms === 5000).fn;
+  await poll();
+  assert.equal(ui.get('status-badge').textContent, '正在重连');
+  assert.equal(ui.get('form-fields').disabled, true);
+  assert.match(flatten(ui.get('state-message')), /5 秒/);
+  await poll(); assert.equal(polls, 1);
+  ui.setTime(1005000); await poll();
+  assert.match(flatten(ui.get('state-message')), /10 秒/);
+  ui.setTime(1010000); await poll(); assert.equal(polls, 2);
+  ui.setTime(1015000); await poll();
+  assert.equal(polls, 3); assert.equal(starts, 1);
+  assert.equal(ui.get('status-badge').textContent, '自动通过');
+  assert.equal(ui.get('state-message').children.length, 0);
+  assert.equal(ui.get('results').hidden, false);
+  assert.equal(ui.timers.size, 0);
+});
+
+test('gateway HTML errors retry but authentication and valid malformed JSON responses stop', async () => {
+  for (const [status, retry] of [[503, true], [401, false], [200, false]]) {
+    const ui = setup(); ui.get('audience').value = '上班族';
+    ui.context.fetch = async path => path === '/api/start'
+      ? { ok: true, json: async () => ({ id: 'run-1' }) }
+      : { status, ok: status === 200, json: async () => { if (status === 401) return { error: '口令不正确' }; throw new SyntaxError('Invalid JSON'); } };
+    await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+    await [...ui.timers.values()].find(t => t.ms === 5000).fn();
+    assert.equal(ui.get('status-badge').textContent, retry ? '正在重连' : '生成未完成');
+    assert.equal(ui.get('form-fields').disabled, retry);
+  }
+});
+
+test('reconnection respects the original deadline, ignores late responses, and never retries POST', async () => {
+  const ui = setup(); ui.get('audience').value = '上班族'; let starts = 0, rejectPoll;
+  ui.context.fetch = async path => {
+    if (path === '/api/start') { starts++; return { ok: true, json: async () => ({ id: 'run-1' }) }; }
+    return new Promise((_resolve, reject) => { rejectPoll = reject; });
+  };
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  const pending = [...ui.timers.values()].find(t => t.ms === 5000).fn();
+  ui.setTime(1360000);
+  [...ui.timers.values()].find(t => t.ms === 360000).fn();
+  rejectPoll(new TypeError('Offline')); await pending;
+  assert.equal(ui.get('status-badge').textContent, '等待超时');
+  assert.equal(ui.timers.size, 0); assert.equal(starts, 1);
+  const offline = setup(); offline.get('audience').value = '上班族'; let attempts = 0;
+  offline.context.fetch = async () => { attempts++; throw new TypeError('Offline'); };
+  await offline.get('generate-form').handlers.submit({ preventDefault() {} });
+  assert.equal(attempts, 1); assert.equal(offline.timers.size, 0);
+  assert.match(flatten(offline.get('state-message')), /避免重复生成/);
+});
