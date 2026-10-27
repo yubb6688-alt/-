@@ -25,6 +25,7 @@ function stop(job) {
   job.controller.abort(); active = null;
   $('form-fields').disabled = false; $('button-label').textContent = '重新生成';
   $('progress-state').hidden = true;
+  $('studio-visual').hidden = true;
 }
 function text(value) { return typeof value === 'string' ? value : value == null ? '' : JSON.stringify(value); }
 function safeUrl(value) {
@@ -62,6 +63,7 @@ function mediaCard(kind, value, description) {
   return card(kind === 'image' ? '商品配图' : '种草视频', body);
 }
 function renderOutputs(outputs, want) {
+  $('studio-visual').hidden = true;
   if (!outputs || typeof outputs !== 'object') throw new Error('工作流没有返回结果，请联系管理员检查输出配置。');
   let result = {};
   try { result = typeof outputs.result === 'string' ? JSON.parse(outputs.result) : outputs.result ?? {}; }
@@ -123,7 +125,13 @@ form.addEventListener('submit', async event => {
   $('form-fields').disabled = true; $('button-label').textContent = '正在生成…';
   $('state-message').replaceChildren(); $('results').replaceChildren(); $('results').hidden = true;
   $('empty-state').hidden = true; $('progress-state').hidden = false;
+  $('studio-visual').hidden = false;
   $('elapsed').textContent = '0'; $('time-progress').value = 0; badge('正在生成');
+  // The preview follows the form on narrow screens; bring progress into view.
+  if (matchMedia('(max-width: 980px)').matches) {
+    $('output-title').focus({ preventScroll: true });
+    $('output-title').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
   const expire = () => {
     if (active !== job) return;
     stop(job); badge('等待超时', 'warning');

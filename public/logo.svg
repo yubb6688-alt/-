@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <title>SEED STUDIO · Let ideas grow</title>
+  <rect width="64" height="64" rx="19" fill="#202020"/>
+  <path d="M20 15H44A8 8 0 0 1 52 23V38A8 8 0 0 1 44 46H30L19 53V45.5A8 8 0 0 1 12 38V23A8 8 0 0 1 20 15Z" fill="#F4F1E9"/>
+  <path d="M32 39V30" stroke="#202020" stroke-width="3" stroke-linecap="round"/>
+  <path d="M31.8 33C24 34 20 29.6 20 23C27.8 22.6 32.5 26.1 31.8 33Z" fill="#AC956E"/>
+  <path d="M32 29C31.6 22.1 36 19.8 43 20C43.1 26.6 39.5 30.1 32 29Z" fill="#202020"/>
+</svg>

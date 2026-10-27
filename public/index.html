@@ -2,36 +2,82 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#254f39"><meta name="description" content="选好商品，写下人群，让灵感长成好内容。种草助手，一站生成多平台商品内容。">
-  <title>种草助手 · 让好物，被看见</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+  <meta name="theme-color" content="#111111"><meta name="description" content="选好商品、写清受众，一次生成小红书笔记、抖音口播和详情页文案，还可按需生成配图与视频。">
+  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script><script src="/liquid-metal.js" defer></script><link rel="stylesheet" href="/metal.css">
 </head>
 <body>
-  <header class="site-header"><a href="/" class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>种草助手<span class="brand-en">CONTENT STUDIO</span></span></a><span class="header-note"><i></i> 好内容，从一个想法开始</span></header>
-  <main>
-    <section class="intro"><div><div class="eyebrow">LESS BLANK PAGES. MORE GOOD STORIES.</div><h1>让好物，<span>被看见。</span><span class="hero-star" aria-hidden="true">✳</span></h1><p>选一件好物，描述你的受众。把种草灵感，变成一整套内容。</p></div><div class="intro-aside"><span>灵感输入</span><span class="line-arrow">⟶</span><span>内容生长</span><small>文案 / 配图 / 视频</small></div></section>
+  <noscript><p class="noscript-notice">请启用浏览器 JavaScript 后使用内容生成功能。封面仍可正常浏览。</p></noscript>
+  <header class="site-header" id="top">
+    <a href="#top" class="brand" aria-label="SEED STUDIO 首页"><img class="brand-mark" src="/logo.svg" width="40" height="40" alt=""><span class="brand-wordmark">SEED STUDIO</span></a>
+    <nav aria-label="主导航"><a class="nav-active" href="#top">首页</a><a href="#studio">创作工作台 <span aria-hidden="true">↗</span></a></nav>
+    <span class="header-note">AI CONTENT STUDIO</span>
+  </header>
+  <section class="metal-hero" aria-labelledby="hero-title">
+    <img class="hero-art" src="/hero-liquid-cover.webp" width="1942" height="809" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+    <canvas id="liquid-metal" aria-hidden="true"></canvas>
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <div class="hero-script" aria-hidden="true">Inspire.</div>
+      <h1 id="hero-title">让好物，自带吸引力。</h1>
+      <p class="hero-description">把产品的闪光点，写成打动人心的内容。<span>WHERE GOOD STORIES BEGIN</span></p>
+      <a class="hero-cta" href="#studio">开启创作 <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="hero-bottom"><span>01 / 灵感，自由流动</span><a href="#studio" class="scroll-cue">向下探索 <span aria-hidden="true">↓</span></a><button type="button" id="motion-toggle" aria-pressed="false" aria-label="暂停液态金属动画"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path class="pause-icon" d="M3 2v8M9 2v8" stroke="currentColor" stroke-width="1.5"/><path class="play-icon" d="m3 1 7 5-7 5Z" fill="currentColor"/></svg><span>暂停动态</span></button></div>
+  </section>
+  <main id="studio">
+    <section class="studio-intro" aria-labelledby="studio-title">
+      <div><span class="eyebrow">02 / THE CREATIVE SPACE</span><h2 id="studio-title">The studio<span>.</span></h2></div>
+      <div class="studio-intro-copy"><p>让灵感，落笔成形。</p><span>从一个产品卖点，到值得被看见的内容。</span></div>
+    </section>
     <div class="workspace">
-      <section class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">01 / 创作需求</span><h2 id="brief-title">先说说，这次种什么草？</h2></div><span class="tiny-spark" aria-hidden="true">✧</span></div>
+
+      <section class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">THE BRIEF / 创作需求</span><h2 id="brief-title">这次，为谁种草？</h2></div><span class="panel-number" aria-hidden="true">01</span></div>
         <form id="generate-form">
           <fieldset id="form-fields">
-            <div class="form-row"><div class="field"><label for="product">商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11"></div></div>
-            <div class="field"><div class="label-row"><label for="audience">目标人群 <span class="required">*</span></label><span id="audience-count" class="count">0 / 60</span></div><textarea id="audience" name="audience" rows="3" maxlength="60" required placeholder="例如：养猫的小户型上班族，想轻松打理毛发，又在意家居颜值。" aria-describedby="audience-hint"></textarea><p id="audience-hint" class="hint">越具体，内容越懂你的受众。</p></div>
-            <div class="field"><label for="want">要什么 <span class="required">*</span></label><select id="want" name="want"><option>文案 + 配图 + 视频</option><option>文案 + 配图</option><option>只要文案</option></select></div>
-            <div class="field"><div class="label-row"><label for="shot">视频镜头要求 <span class="optional">选填</span></label><span id="shot-count" class="count">0 / 500</span></div><textarea id="shot" name="shot" rows="3" maxlength="500" placeholder="例如：阳光客厅开场，特写地面猫毛，再切到清洁过程；整体自然、生活化。"></textarea></div>
-            <div class="field access-field"><label for="access-code">访问口令 <span class="required">*</span></label><div class="password-wrap"><span aria-hidden="true">⌑</span><input id="access-code" name="access" type="password" required placeholder="输入你的创作口令" autocomplete="off"></div></div>
-            <button id="generate-button" type="submit"><span aria-hidden="true">✧</span><span id="button-label">生成内容</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            <div class="form-row"><div class="field"><label for="product">推荐商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">推广活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11、新品上市"></div></div>
+            <div class="field"><div class="label-row"><label for="audience">目标人群 <span class="required">*</span></label><span id="audience-count" class="count">0 / 60</span></div><textarea id="audience" name="audience" rows="3" maxlength="60" required placeholder="例如：养猫的小户型上班族，想轻松打理毛发，又在意家居颜值。" aria-describedby="audience-hint"></textarea><p id="audience-hint" class="hint">写清使用场景和在意的问题，文案更有针对性。</p></div>
+            <div class="field"><label for="want">生成内容 <span class="required">*</span></label><select id="want" name="want"><option>文案 + 配图 + 视频</option><option>文案 + 配图</option><option>只要文案</option></select><p class="hint">文案包含小红书笔记、抖音口播和详情页首屏。</p></div>
+            <div class="field"><div class="label-row"><label for="shot">视频画面偏好 <span class="optional">选填</span></label><span id="shot-count" class="count">0 / 500</span></div><textarea id="shot" name="shot" rows="3" maxlength="500" placeholder="例如：阳光客厅开场，特写地面猫毛，再切到清洁过程；整体自然、生活化。不生成视频可留空。"></textarea></div>
+            <div class="field access-field"><label for="access-code">访问口令 <span class="required">*</span></label><div class="password-wrap"><span aria-hidden="true">⌑</span><input id="access-code" name="access" type="password" required placeholder="请输入访问口令" autocomplete="off"></div></div>
+            <button id="generate-button" type="submit"><span aria-hidden="true">✧</span><span id="button-label">开始创作</span><span class="button-arrow" aria-hidden="true">↗</span></button>
           </fieldset>
-          <p class="form-footnote">好内容值得等一会儿，最多需要 6 分钟</p>
+          <p class="form-footnote">生成需要一点时间，包含图片或视频时可能更久。</p>
         </form>
       </section>
-      <section class="output panel" aria-labelledby="output-title"><div class="section-heading"><div><span class="step-label">02 / 创作结果</span><h2 id="output-title">你的下一篇好内容</h2></div><span id="status-badge" class="badge">等待灵感</span></div>
+      <section class="output panel" aria-labelledby="output-title"><div class="section-heading"><div><span class="step-label">THE EXPRESSION / 内容预览</span><h2 id="output-title" tabindex="-1">好物的另一种表达。</h2></div><span id="status-badge" class="badge" role="status">待创作</span></div>
         <div id="state-message" aria-live="polite"></div>
-        <div id="empty-state" class="empty-state"><div class="art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="art-spark spark-one">✧</div><div class="art-spark spark-two">✳</div><div class="paper paper-back"><div></div><div></div><div></div></div><div class="paper paper-front"><span class="paper-pill">一点灵感</span><div class="sprout"><i class="stem"></i><i class="leaf leaf-left"></i><i class="leaf leaf-right"></i></div><div class="paper-line"></div><div class="paper-line short"></div></div><div class="art-label">让好内容，自然生长</div></div><h3>种下一个想法，<br>收获一整套内容。</h3><p>填好左侧需求，剩下的交给种草助手。<br>每一份内容，都会经过自动审核。</p><div class="output-types"><span>小红书笔记</span><span>抖音口播</span><span>详情页首屏</span></div></div>
-        <div id="progress-state" class="progress-state" hidden><div class="loading-sprout" aria-hidden="true">✳</div><h3>灵感正在生长中</h3><p>正在生成并审核你的内容，请稍候。</p><div class="elapsed"><strong id="elapsed">0</strong><span>秒 · 已等待</span></div><progress id="time-progress" max="360" value="0" aria-label="已等待时间"></progress><p class="hint">每 5 秒更新一次状态，最多等待 6 分钟</p></div>
+          <div id="studio-visual" class="studio-sculpture">
+            <span class="sculpture-caption" aria-hidden="true">A LITTLE SPARK. A NEW STORY.</span>
+            <canvas id="studio-liquid-metal" aria-hidden="true"></canvas>
+            <svg aria-hidden="true" class="chrome-sculpture studio-fallback" viewBox="0 0 420 280" fill="none">
+              <defs>
+                <linearGradient id="chrome-shell" x1="100" y1="40" x2="310" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".16" stop-color="#a0a1a3"/><stop offset=".25" stop-color="#f9f9fa"/><stop offset=".33" stop-color="#4a4b4e"/><stop offset=".4" stop-color="#242527"/><stop offset=".48" stop-color="#d6d7d8"/><stop offset=".61" stop-color="#fff"/><stop offset=".72" stop-color="#8b8d90"/><stop offset=".8" stop-color="#303135"/><stop offset=".9" stop-color="#dddfe1"/><stop offset="1" stop-color="#fafafa"/></linearGradient>
+                <linearGradient id="chrome-rim" x1="140" y1="30" x2="240" y2="240" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".25" stop-color="#b7b8ba"/><stop offset=".48" stop-color="#28292b"/><stop offset=".63" stop-color="#f7f7f7"/><stop offset="1" stop-color="#585a5d"/></linearGradient>
+                <linearGradient id="gold-drop" x1="275" y1="138" x2="350" y2="209" gradientUnits="userSpaceOnUse"><stop stop-color="#f4e8ce"/><stop offset=".18" stop-color="#dfc79b"/><stop offset=".29" stop-color="#ac8854"/><stop offset=".4" stop-color="#433321"/><stop offset=".53" stop-color="#201d19"/><stop offset=".64" stop-color="#dfc49a"/><stop offset=".81" stop-color="#fff0cf"/><stop offset=".9" stop-color="#a68a5f"/><stop offset="1" stop-color="#5d4c36"/></linearGradient>
+                <radialGradient id="silver-bead" cx=".3" cy=".2" r=".9"><stop stop-color="#fff"/><stop offset=".2" stop-color="#e2e3e4"/><stop offset=".36" stop-color="#626469"/><stop offset=".48" stop-color="#25262a"/><stop offset=".67" stop-color="#c1c4c6"/><stop offset=".82" stop-color="#fff"/><stop offset="1" stop-color="#626368"/></radialGradient>
+              </defs>
+              <ellipse cx="215" cy="253" rx="98" ry="8" fill="#777" opacity=".07"/>
+              <path d="M177 44C197 34 219 44 221 67C224 89 214 99 229 108C250 118 271 119 280 143C290 170 270 193 250 201C228 211 233 237 212 241C192 245 178 232 182 213C185 197 169 201 151 195C126 187 113 166 121 144C127 126 143 121 153 109C168 93 151 59 177 44Z" fill="url(#chrome-shell)" stroke="url(#chrome-rim)" stroke-width="2"/>
+              <path d="M178 49C164 59 169 79 171 91M133 142C122 161 135 179 151 182M249 125C270 132 279 153 270 170" stroke="#fff" stroke-opacity=".8" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M309 109C326 105 339 122 335 140C332 154 321 158 323 171C324 183 314 192 303 187C292 181 298 169 294 159C281 137 291 114 309 109Z" fill="url(#gold-drop)" stroke="#b8a281" stroke-width=".7"/>
+              <path d="M304 118C295 128 296 139 301 148" stroke="#fff4d9" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+              <circle cx="111" cy="79" r="14" fill="url(#silver-bead)"/>
+              <circle cx="306" cy="65" r="7" fill="url(#silver-bead)"/>
+            </svg>
+          <button type="button" id="studio-motion-toggle" class="studio-motion-toggle" aria-pressed="false" aria-label="暂停预览动画"><svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path class="pause-icon" d="M3 2v8M9 2v8" stroke="currentColor" stroke-width="1.5"/><path class="play-icon" d="m3 1 7 5-7 5Z" fill="currentColor"/></svg><span>暂停动态</span></button>
+          </div>
+        <div id="empty-state" class="empty-state">
+          <span class="preview-kicker">YOUR NEXT STORY</span>
+          <h3>下一篇好内容，<br>从你的灵感开始。</h3>
+          <p>写下需求，让产品的闪光点有迹可循。<br>文案、配图与视频，将在这里呈现。</p>
+          <div class="output-types"><span><small>01</small> 小红书笔记</span><span><small>02</small> 抖音口播</span><span><small>03</small> 详情页首屏</span></div>
+        </div>
+        <div id="progress-state" class="progress-state" hidden><div class="loading-sprout" aria-hidden="true"><img src="/logo.svg" width="64" height="64" alt=""></div><h3>正在把需求写成内容</h3><p>文案与素材正在生成，完成自动审核后会显示在这里。</p><div class="elapsed"><strong id="elapsed">0</strong><span>秒 · 已等待</span></div><progress id="time-progress" max="360" value="0" aria-label="已等待时间"></progress><p class="hint">结果会自动更新。页面最多等待 6 分钟，超时后后台可能仍在处理。</p></div>
         <div id="results" hidden></div>
-        <div class="output-bottom"><span class="small-leaf" aria-hidden="true">✳</span> 为真实的生活，写有温度的内容 <span>✦</span></div>
+        <div class="output-bottom"><span class="studio-dot" aria-hidden="true"></span> 发布前，请核对商品信息与活动价格 <span class="output-signature" aria-hidden="true">S.</span></div>
       </section>
     </div>
-    <footer><span>种草助手 <span class="footer-dot">·</span> 让创作轻一点</span><span>一份灵感，多种表达。</span></footer>
+    <footer><a href="#top" class="footer-brand">SEED STUDIO</a><span>好产品，值得好好说。</span><a href="#top" class="back-top">回到顶部 ↑</a></footer>
   </main>
 </body>
 </html>

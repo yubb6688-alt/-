@@ -12,17 +12,28 @@ class Element {
   addEventListener(name, fn) { this.handlers[name] = fn; }
   reportValidity() { return true; }
   setCustomValidity(value) { this.validityMessage = value; }
+  focus() { this.focused = true; }
+  scrollIntoView(options) { this.scrolled = options; }
   set innerHTML(value) { throw new Error('Generated text must never enter innerHTML'); }
 }
-function setup() {
+function setup({ narrow = false } = {}) {
   const elements = new Map(), timers = new Map(); let counter = 0, time = 1000000;
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
   const context = vm.createContext({ document: { getElementById: get, createElement: tag => new Element(tag) }, URL, AbortController, navigator: { clipboard: { writeText: async () => {} } }, Date: { now: () => time }, setInterval(fn, ms) { const id = ++counter; timers.set(id, { fn, ms, interval: true }); return id; }, clearInterval(id) { timers.delete(id); }, setTimeout(fn, ms) { const id = ++counter; timers.set(id, { fn, ms }); return id; }, clearTimeout(id) { timers.delete(id); }, fetch: async () => ({ ok: true, json: async () => ({ id: 'run-1' }) }) });
+  context.matchMedia = query => ({ matches: query.includes('max-width') ? narrow : false });
   vm.runInContext(source, context);
   return { get, context, timers, setTime: value => { time = value; }, run: code => vm.runInContext(code, context) };
 }
 const flatten = element => [element.textContent, ...element.children.map(flatten)].join(' ');
 const find = (element, tag) => [element, ...element.children.flatMap(child => find(child, tag))].filter(e => e.tag === tag);
+test('mobile submission brings the generation progress into view', async () => {
+  const ui = setup({ narrow: true });
+  ui.get('audience').value = '上班族';
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  assert.equal(ui.get('output-title').focused, true);
+  assert.equal(ui.get('output-title').scrolled.block, 'start');
+  assert.equal(ui.get('progress-state').hidden, false);
+});
 test('automatic approval renders all three text sections, treats hostile strings as literal text and blocks unsafe URLs', () => {
   const ui = setup();
   ui.context.outputs = { verdict: '自动通过', result: JSON.stringify({ verdict: '自动通过', xhs: { title: '<img src=x onerror=alert(1)>', body: '<script>attack()</script>', tags: ['#猫'] }, douyin: { script: '口播' }, detail: { headline: '主标题', points: ['1', '2', '3'], price: '价格条' }, image_url: 'javascript:alert(1)', video_url: 'https://example.com/video.mp4', video_desc: '<b>镜头</b>' }) };
@@ -37,6 +48,7 @@ test('manual review withholds content even when verdict fields conflict', () => 
   ui.run('renderOutputs(outputs, "只要文案")');
   assert.ok(flatten(ui.get('state-message')).includes('<b>参数需核实</b>'));
   assert.equal(ui.get('results').children.length, 0); assert.equal(ui.get('status-badge').textContent, '转人工');
+  assert.equal(ui.get('studio-visual').hidden, true);
 });
 test('invalid JSON and unknown verdict fail explicitly', () => {
   const ui = setup();
@@ -53,6 +65,7 @@ test('5-second polling interval and hard 6-minute timeout restore the form and a
   assert.ok(timeout); ui.setTime(1360000); timeout.fn();
   assert.equal(ui.get('form-fields').disabled, false);
   assert.equal(ui.get('progress-state').hidden, true);
+  assert.equal(ui.get('studio-visual').hidden, true);
   assert.ok(flatten(ui.get('state-message')).includes('已等待 6 分钟'));
   assert.equal(ui.timers.size, 0);
 });
@@ -63,6 +76,13 @@ test('poll success stops all timers, and a duplicate submit does not create a se
   await ui.get('generate-form').handlers.submit({ preventDefault() {} });
   await ui.get('generate-form').handlers.submit({ preventDefault() {} });
   assert.equal(starts, 1);
+  assert.equal(ui.get('studio-visual').hidden, false);
   await [...ui.timers.values()].find(t => t.ms === 5000).fn();
   assert.equal(ui.get('status-badge').textContent, '自动通过'); assert.equal(ui.timers.size, 0);
+  assert.equal(ui.get('studio-visual').hidden, true);
+  assert.equal(ui.get('results').hidden, false);
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  assert.equal(starts, 2);
+  assert.equal(ui.get('studio-visual').hidden, false);
+  assert.equal(ui.get('results').hidden, true);
 });

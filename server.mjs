@@ -11,6 +11,12 @@ const assets = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
   ['/style.css', ['style.css', 'text/css; charset=utf-8']],
+  ['/metal.css', ['metal.css', 'text/css; charset=utf-8']],
+  ['/liquid-metal.js', ['liquid-metal.js', 'text/javascript; charset=utf-8']],
+  ['/hero-liquid-reference.png', ['hero-liquid-reference.png', 'image/png']],
+  ['/hero-liquid-cover.webp', ['hero-liquid-cover.webp', 'image/webp']],
+  ['/logo.svg', ['logo.svg', 'image/svg+xml']],
+  ['/sprout.svg', ['sprout.svg', 'image/svg+xml']],
 ]);
 const server = http.createServer(async (req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
