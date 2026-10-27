@@ -62,6 +62,16 @@ npm start
 
 部署步骤：在 Vercel 导入 GitHub 仓库，根目录保持仓库根目录，不填写 Build Command、Output Directory；连接 Upstash Redis，设置环境变量后部署。`vercel.json` 固定使用 Other 预设，让 `public/` 作为静态页面、`api/` 作为云函数，避免把本地 `server.mjs` 当作线上入口。生产环境部署完成后用网页口令测试生成与状态轮询。
 
+## Netlify 免费备用站
+
+保留 Vercel，备用站独立托管前端及 API，浏览器不再依赖 `vercel.app`。`netlify.toml` 设置发布目录为 `public`、构建命令为 `npm test`、Node.js 22；`netlify/functions/seed-api.mjs` 处理原有 `/api/start` 与 `/api/status` 路径。
+
+在 Netlify 的 Free 套餐中导入本仓库，在平台环境变量中设置 `DIFY_API_KEY`、`ACCESS_CODE`、`UPSTASH_REDIS_REST_URL`、`UPSTASH_REDIS_REST_TOKEN`，然后部署。只在服务端保存这些值，不放进 `netlify.toml` 或前端。使用同一个 Redis 实例时，两站共享每 IP 限流额度。首次配置或变更环境变量后需要重新部署。
+
+备用站接口使用 Netlify 提供的 `context.ip`，不信任客户端转发头；保留鉴权、请求大小限制、超时、重试及安全响应头。部署完成后先检查页面和未授权 API，再在确认密钥配置后验证真实生成。仅上传 `public/` 的拖拽部署不包含后端，不能作为完整备用站交付。
+
+免费托管有使用额度，保持 Free 套餐且不启用付费升级；Dify / 模型本身仍按原服务额度运行。新域名的国内与微信可达性需用真实设备验证，不能由本地或代理测试推断。
+
 ## 本地或 Docker 部署
 
 本地和 Docker 使用常驻 Node 服务及 SQLite 限流存储。部署到普通 Node 运行平台或服务器时，启动命令为 `npm start`，绑定平台提供的 `PORT`，在平台环境变量中配置两个密钥。将 `.data` 挂载到持久磁盘，并通过 HTTPS 反向代理提供访问。
