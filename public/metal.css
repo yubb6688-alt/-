@@ -128,4 +128,12 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
   .empty-state h3{font-size:23px;letter-spacing:1px}.output-types{gap:8px;justify-content:center}
 }
 @media(pointer:coarse){.brief input,.brief select,.brief textarea{font-size:16px}}
+/* Avoid extra GPU compositing on touch devices; the artwork remains visible. */
+@media(max-width:980px),(pointer:coarse){
+  #motion-toggle,.studio-motion-toggle{backdrop-filter:none;background:#efefefd9}
+  .chrome-sculpture{filter:none}
+}
+/* Give older WebViews a stable sculpture height before aspect-ratio support. */
+.studio-sculpture{height:300px}
+@supports(aspect-ratio:1){.studio-sculpture{height:auto}}
 @media(max-height:500px) and (orientation:landscape){.metal-hero{height:460px;min-height:460px}.hero-copy{top:44%}.hero-script{font-size:100px}.metal-hero h1{margin-bottom:18px}}

@@ -104,25 +104,48 @@ void main(){
  gl_FragColor=!found ? vec4(0.) : vec4(color,1.);
 }`;
 
-function createLiquidSculpture(canvas, root, toggle, preview = false) {
+function createLiquidSculpture(canvas, root, toggle, preview = false, requested = false) {
   if (!canvas || !root || !toggle) return;
+  // Keep the first mobile/WeChat paint entirely CPU/static. Even compiling the
+  // ray marcher can freeze older WebViews, so a paused WebGL canvas is not enough.
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const coarsePointer = matchMedia('(pointer: coarse)').matches;
+  const lightweight = coarsePointer || matchMedia('(max-width: 980px)').matches ||
+    (typeof navigator !== 'undefined' && /MicroMessenger|Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+  if (typeof ResizeObserver === 'undefined' || typeof IntersectionObserver === 'undefined' || typeof MutationObserver === 'undefined') {
+    toggle.hidden = true;
+    return;
+  }
+  if (!requested && (lightweight || reducedMotion.matches)) {
+    toggle.setAttribute('aria-pressed', 'true');
+    toggle.setAttribute('aria-label', `播放${preview ? '预览动画' : '液态金属动画'}`);
+    toggle.querySelector('span').textContent = '播放动态';
+    toggle.querySelector('svg').classList.add('is-paused');
+    toggle.addEventListener('click', () => createLiquidSculpture(canvas, root, toggle, preview, true), { once: true });
+    return;
+  }
   let gl;
   try { gl = canvas.getContext('webgl', { alpha: preview, antialias: false, powerPreference: 'low-power' }); }
   catch { toggle.hidden = true; return; }
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const coarsePointer = matchMedia('(pointer: coarse)').matches;
-  const frameInterval = 1000 / (preview || coarsePointer ? 30 : 60);
-  let paused = reducedMotion.matches;
+  const frameInterval = 1000 / (lightweight ? 20 : preview ? 30 : 60);
+  let paused = false;
   let visible = true;
   let frame = 0;
   let time = 0;
   let previous = 0;
+  let slowFrames = 0;
   let pointer = [0, 0];
   let target = [0, 0];
   let program;
   let textureReady = false;
   const sourceImage = preview ? null : new Image();
   let resolutionLocation, timeLocation, pointerLocation;
+function fallback() {
+  if (frame) cancelAnimationFrame(frame);
+  frame = 0; program = null; textureReady = false;
+  root.classList.remove('has-webgl');
+  toggle.hidden = true;
+}
 function shader(type, source) {
   const result = gl.createShader(type);
   gl.shaderSource(result, source); gl.compileShader(result);
@@ -143,12 +166,12 @@ function setup() {
   resolutionLocation = gl.getUniformLocation(program, 'resolution');
   timeLocation = gl.getUniformLocation(program, 'time');
   pointerLocation = gl.getUniformLocation(program, 'pointer');
-  if (preview) root.classList.add('has-webgl');
-  else {
+  if (!preview) {
     textureReady = false;
     const texture = gl.createTexture();
     const upload = () => {
-      if (gl.isContextLost()) return;
+      if (!program || gl.isContextLost()) return;
+      try {
       gl.useProgram(program);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D,texture);
@@ -161,8 +184,8 @@ function setup() {
       gl.uniform1i(gl.getUniformLocation(program,'artwork'),0);
       gl.uniform1f(gl.getUniformLocation(program,'imageAspect'),sourceImage.naturalWidth/sourceImage.naturalHeight);
       textureReady = true;
-      root.classList.add('has-webgl');
       sync();
+      } catch { fallback(); }
     };
     sourceImage.onload = upload;
     sourceImage.onerror = () => { textureReady=false;root.classList.remove('has-webgl');toggle.hidden=true;sync(); };
@@ -171,26 +194,32 @@ function setup() {
   }
 }
 function draw() {
+  if (!program || gl.isContextLost()) return;
   if (!preview && !textureReady) return;
   const rect = canvas.getBoundingClientRect();
   if (!rect.width || !rect.height) return;
-  const maxScale = preview ? (coarsePointer ? 1.25 : 1.5) : 1.5;
-  const scale = Math.min(devicePixelRatio || 1, maxScale, (preview ? 720 : 1800) / Math.max(rect.width, 1));
+  const maxScale = lightweight ? 1 : 1.5;
+  const maxSize = lightweight ? (preview ? 360 : 900) : (preview ? 720 : 1800);
+  const scale = Math.min(devicePixelRatio || 1, maxScale, maxSize / Math.max(rect.width, rect.height, 1));
   const width = Math.max(1, Math.round(rect.width * scale));
   const height = Math.max(1, Math.round(rect.height * scale));
   if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; gl.viewport(0,0,width,height); }
   gl.uniform2f(resolutionLocation,width,height);gl.uniform1f(timeLocation,time);gl.uniform2f(pointerLocation,...pointer);
   gl.drawArrays(gl.TRIANGLES,0,6);
+  // Reveal only a successfully drawn frame; keep the static artwork underneath.
+  root.classList.add('has-webgl');
 }
 function animate(now) {
   frame = 0;
-  if (!visible || root.hidden || document.hidden || paused || (!preview && !textureReady)) { previous = 0; return; }
+  if (!program || !visible || root.hidden || document.hidden || paused || (!preview && !textureReady)) { previous = 0; return; }
   // Avoid rendering the ray-marched sculpture at 90/120 Hz on high-refresh phones.
   if (previous && now - previous < frameInterval - .5) { frame = requestAnimationFrame(animate); return; }
+  slowFrames = previous && now - previous > 180 ? slowFrames + 1 : 0;
+  if (slowFrames >= 8) { fallback(); return; }
   if (previous) time += Math.min((now-previous)/1000,.1);
   previous = now;
   pointer = pointer.map((value,i) => value + (target[i]-value)*.035);
-  draw(); frame = requestAnimationFrame(animate);
+  try { draw(); frame = requestAnimationFrame(animate); } catch { fallback(); }
 }
 function sync() {
   toggle.setAttribute('aria-pressed', String(paused));
@@ -199,22 +228,25 @@ function sync() {
   toggle.querySelector('svg').classList.toggle('is-paused',paused);
   if (frame) cancelAnimationFrame(frame);
   frame = 0; previous = 0;
-  if (program && !gl.isContextLost() && !root.hidden && visible && !document.hidden) { draw(); if (!paused && (preview || textureReady)) frame=requestAnimationFrame(animate); }
+  if (program && !gl.isContextLost() && !root.hidden && visible && !document.hidden) {
+    try { draw(); if (!paused && (preview || textureReady)) frame=requestAnimationFrame(animate); } catch { fallback(); }
+  }
 }
 if (gl) {
   try {
     setup(); sync();
-    new ResizeObserver(() => { if (!gl.isContextLost() && !root.hidden && visible && !document.hidden) draw(); }).observe(canvas);
+    new ResizeObserver(sync).observe(canvas);
     new IntersectionObserver(entries => { visible=entries[0].isIntersecting;sync(); }).observe(root);
     new MutationObserver(sync).observe(root, { attributes:true, attributeFilter:['hidden'] });
     document.addEventListener('visibilitychange',sync);
     toggle.addEventListener('click',() => { paused=!paused;sync(); });
-    reducedMotion.addEventListener('change',event => { paused=event.matches;sync(); });
+    const onMotionChange = event => { paused=event.matches;sync(); };
+    if (reducedMotion.addEventListener) reducedMotion.addEventListener('change',onMotionChange);
+    else if (reducedMotion.addListener) reducedMotion.addListener(onMotionChange);
     root.addEventListener('pointermove',event => { const r=root.getBoundingClientRect();target=[(event.clientX-r.left)/r.width-.5,.5-(event.clientY-r.top)/r.height]; });
     root.addEventListener('pointerleave',() => { target=[0,0]; });
-    canvas.addEventListener('webglcontextlost',event => { event.preventDefault();cancelAnimationFrame(frame);program=null;root.classList.remove('has-webgl');toggle.hidden=true; });
-    canvas.addEventListener('webglcontextrestored',() => { try { setup();toggle.hidden=false;sync(); } catch { toggle.hidden=true; } });
-  } catch { root.classList.remove('has-webgl');toggle.hidden=true; }
+    canvas.addEventListener('webglcontextlost',event => { event.preventDefault();fallback(); });
+  } catch { fallback(); }
 } else toggle.hidden=true;
 
 }
