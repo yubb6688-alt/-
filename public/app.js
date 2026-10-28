@@ -2,6 +2,14 @@ const $ = id => document.getElementById(id);
 const form = $('generate-form');
 let active = null;
 
+function updateNavIndicator() {
+  const link = $(location.hash === '#studio' || location.hash === '#result' ? 'nav-studio' : 'nav-home');
+  const indicator = $('nav-indicator');
+  indicator.style.width = `${link.offsetWidth}px`;
+  indicator.style.transform = `translateX(${link.offsetLeft}px)`;
+  indicator.style.opacity = link.offsetWidth ? '1' : '0';
+}
+
 // Hash navigation keeps the in-flight job and its access code in this page's memory.
 function showPage(page, focus = false) {
   const home = page === 'home';
@@ -11,6 +19,11 @@ function showPage(page, focus = false) {
   $('studio').className = result ? 'page-result' : 'page-brief';
   $('brief-page').hidden = home || result;
   $('result-page').hidden = home || !result;
+  $('nav-home').className = home ? 'nav-active' : '';
+  $('nav-studio').className = home ? '' : 'nav-active';
+  $('nav-home').setAttribute('aria-current', home ? 'page' : 'false');
+  $('nav-studio').setAttribute('aria-current', home ? 'false' : 'page');
+  updateNavIndicator();
   if (focus) {
     const target = result ? $('output-title') : home ? $('hero-title') : $('brief-title');
     target.focus({ preventScroll: true });
@@ -21,6 +34,8 @@ function pageFromHash() {
   return location.hash === '#result' ? 'result' : location.hash === '#studio' ? 'studio' : 'home';
 }
 window.addEventListener('hashchange', () => showPage(pageFromHash(), true));
+window.addEventListener('resize', updateNavIndicator);
+window.addEventListener('load', updateNavIndicator);
 showPage(pageFromHash());
 
 for (const name of ['audience', 'shot']) $(name).addEventListener('input', () => {

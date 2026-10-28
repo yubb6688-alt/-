@@ -5,7 +5,8 @@ import { readFileSync } from 'node:fs';
 
 const source = readFileSync(new URL('../public/app.js', import.meta.url), 'utf8');
 class Element {
-  constructor(tag = 'div') { this.tag = tag; this.children = []; this.handlers = {}; this.textContent = ''; this.value = ''; this.hidden = false; }
+  constructor(tag = 'div') { this.tag = tag; this.children = []; this.handlers = {}; this.textContent = ''; this.value = ''; this.hidden = false; this.style = {}; this.attributes = {}; this.offsetLeft = 0; this.offsetWidth = 0; }
+  setAttribute(name, value) { this.attributes[name] = value; }
   append(...children) { this.children.push(...children); }
   prepend(...children) { this.children.unshift(...children); }
   replaceChildren(...children) { this.children = children; }
