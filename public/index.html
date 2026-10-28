@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111"><meta name="description" content="选好商品、写清受众，一次生成小红书笔记、抖音口播和详情页文案，还可按需生成配图与视频。">
-  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261027-reliable1" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261027-mobile2">
+  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261028-pages1" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261028-pages1">
 </head>
 <body>
   <noscript><p class="noscript-notice">请启用浏览器 JavaScript 后使用内容生成功能。封面仍可正常浏览。</p></noscript>
@@ -12,26 +12,27 @@
     <nav aria-label="主导航"><a class="nav-active" href="#top">首页</a><a href="#studio">创作工作台 <span aria-hidden="true">↗</span></a></nav>
     <span class="header-note">AI CONTENT STUDIO</span>
   </header>
-  <section class="metal-hero" aria-labelledby="hero-title">
+  <section id="home-page" class="metal-hero" aria-labelledby="hero-title">
     <picture><source srcset="/hero-liquid-cover.webp" type="image/webp"><img class="hero-art" src="/hero-liquid-cover.jpg" width="1942" height="809" alt="" aria-hidden="true" fetchpriority="high" decoding="async"></picture>
     <canvas id="liquid-metal" aria-hidden="true"></canvas>
     <div class="hero-veil" aria-hidden="true"></div>
     <div class="hero-copy">
       <div class="hero-script" aria-hidden="true">Inspire.</div>
-      <h1 id="hero-title">让好物，自带吸引力。</h1>
+      <h1 id="hero-title" tabindex="-1">让好物，自带吸引力。</h1>
       <p class="hero-description">把产品的闪光点，写成打动人心的内容。<span>WHERE GOOD STORIES BEGIN</span></p>
       <a class="hero-cta" href="#studio">开启创作 <span aria-hidden="true">↗</span></a>
     </div>
     <div class="hero-bottom"><span>01 / 灵感，自由流动</span><a href="#studio" class="scroll-cue">向下探索 <span aria-hidden="true">↓</span></a><button type="button" id="motion-toggle" aria-pressed="false" aria-label="暂停液态金属动画"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path class="pause-icon" d="M3 2v8M9 2v8" stroke="currentColor" stroke-width="1.5"/><path class="play-icon" d="m3 1 7 5-7 5Z" fill="currentColor"/></svg><span>暂停动态</span></button></div>
   </section>
-  <main id="studio">
+  <main id="studio" hidden>
     <section class="studio-intro" aria-labelledby="studio-title">
       <div><span class="eyebrow">02 / THE CREATIVE SPACE</span><h2 id="studio-title">The studio<span>.</span></h2></div>
       <div class="studio-intro-copy"><p>让灵感，落笔成形。</p><span>从一个产品卖点，到值得被看见的内容。</span></div>
     </section>
     <div class="workspace">
 
-      <section class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">THE BRIEF / 创作需求</span><h2 id="brief-title">这次，为谁种草？</h2></div><span class="panel-number" aria-hidden="true">01</span></div>
+      <section id="brief-page" class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">THE BRIEF / 创作需求</span><h2 id="brief-title" tabindex="-1">这次，为谁种草？</h2></div><span class="panel-number" aria-hidden="true">01</span></div>
+        <a id="current-run-link" class="current-run-link" href="#result" hidden>查看生成进度 →</a>
         <form id="generate-form">
           <fieldset id="form-fields">
             <div class="form-row"><div class="field"><label for="product">推荐商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">推广活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11、新品上市"></div></div>
@@ -44,7 +45,7 @@
           <p class="form-footnote">生成需要一点时间，包含图片或视频时可能更久。</p>
         </form>
       </section>
-      <section class="output panel" aria-labelledby="output-title"><div class="section-heading"><div><span class="step-label">THE EXPRESSION / 内容预览</span><h2 id="output-title" tabindex="-1">好物的另一种表达。</h2></div><span id="status-badge" class="badge" role="status">待创作</span></div>
+      <section id="result-page" class="output panel" aria-labelledby="output-title" hidden><div class="section-heading"><div><span class="step-label">THE EXPRESSION / 内容预览</span><h2 id="output-title" tabindex="-1">好物的另一种表达。</h2></div><span id="status-badge" class="badge" role="status">待创作</span></div>
         <div id="state-message" aria-live="polite"></div>
           <div id="studio-visual" class="studio-sculpture">
             <span class="sculpture-caption" aria-hidden="true">A LITTLE SPARK. A NEW STORY.</span>
@@ -72,8 +73,9 @@
           <p>写下需求，让产品的闪光点有迹可循。<br>文案、配图与视频，将在这里呈现。</p>
           <div class="output-types"><span><small>01</small> 小红书笔记</span><span><small>02</small> 抖音口播</span><span><small>03</small> 详情页首屏</span></div>
         </div>
-        <div id="progress-state" class="progress-state" hidden><div class="loading-sprout" aria-hidden="true"><img src="/logo.svg" width="64" height="64" alt=""></div><h3>正在把需求写成内容</h3><p>文案与素材正在生成，完成自动审核后会显示在这里。</p><div class="elapsed"><strong id="elapsed">0</strong><span>秒 · 已等待</span></div><progress id="time-progress" max="360" value="0" aria-label="已等待时间"></progress><p class="hint">结果会自动更新。页面最多等待 6 分钟，超时后后台可能仍在处理。</p></div>
+        <div id="progress-state" class="progress-state" hidden><div class="liquid-loader" aria-hidden="true"><span></span><span></span><span></span></div><h3>正在把需求写成内容</h3><p>文案与素材正在生成，完成自动审核后会显示在这里。</p><div class="elapsed"><strong id="elapsed">0</strong><span>秒 · 已等待</span></div><progress id="time-progress" max="360" value="0" aria-label="已等待时间，占最多等待时间的比例"></progress><p class="hint">进度条表示已等待时间，并非实际生成进度。页面最多等待 6 分钟。</p></div>
         <div id="results" hidden></div>
+        <div class="result-actions"><a id="return-brief-link" href="#studio">← 返回修改需求</a><a href="#top">回到首页</a></div>
         <div class="output-bottom"><span class="studio-dot" aria-hidden="true"></span> 发布前，请核对商品信息与活动价格 <span class="output-signature" aria-hidden="true">S.</span></div>
       </section>
     </div>

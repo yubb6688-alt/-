@@ -20,12 +20,35 @@ function setup({ narrow = false } = {}) {
   const elements = new Map(), timers = new Map(); let counter = 0, time = 1000000;
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
   const context = vm.createContext({ document: { getElementById: get, createElement: tag => new Element(tag) }, URL, AbortController, navigator: { clipboard: { writeText: async () => {} } }, Date: { now: () => time }, setInterval(fn, ms) { const id = ++counter; timers.set(id, { fn, ms, interval: true }); return id; }, clearInterval(id) { timers.delete(id); }, setTimeout(fn, ms) { const id = ++counter; timers.set(id, { fn, ms }); return id; }, clearTimeout(id) { timers.delete(id); }, fetch: async () => ({ ok: true, json: async () => ({ id: 'run-1' }) }) });
+  context.location = { hash: '' };
+  context.window = { handlers: {}, addEventListener(name, fn) { this.handlers[name] = fn; } };
   context.matchMedia = query => ({ matches: query.includes('max-width') ? narrow : false });
   vm.runInContext(source, context);
   return { get, context, timers, setTime: value => { time = value; }, run: code => vm.runInContext(code, context) };
 }
 const flatten = element => [element.textContent, ...element.children.map(flatten)].join(' ');
 const find = (element, tag) => [element, ...element.children.flatMap(child => find(child, tag))].filter(e => e.tag === tag);
+test('home, brief and result are separate screens; navigation preserves an active job', async () => {
+  const ui = setup();
+  assert.equal(ui.get('home-page').hidden, false);
+  assert.equal(ui.get('studio').hidden, true);
+  ui.context.location.hash = '#studio'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('home-page').hidden, true);
+  assert.equal(ui.get('brief-page').hidden, false);
+  assert.equal(ui.get('result-page').hidden, true);
+  ui.get('audience').value = '上班族';
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  assert.equal(ui.context.location.hash, '#result');
+  assert.equal(ui.get('brief-page').hidden, true);
+  assert.equal(ui.get('result-page').hidden, false);
+  ui.context.location.hash = '#studio'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('form-fields').disabled, true);
+  assert.equal(ui.get('current-run-link').hidden, false);
+  assert.match(ui.get('current-run-link').textContent, /查看生成进度/);
+  assert.match(ui.get('return-brief-link').textContent, /返回查看需求/);
+  ui.context.location.hash = '#result'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('progress-state').hidden, false);
+});
 test('mobile submission brings the generation progress into view', async () => {
   const ui = setup({ narrow: true });
   ui.get('audience').value = '上班族';
@@ -81,6 +104,7 @@ test('poll success stops all timers, and a duplicate submit does not create a se
   assert.equal(ui.get('status-badge').textContent, '自动通过'); assert.equal(ui.timers.size, 0);
   assert.equal(ui.get('studio-visual').hidden, true);
   assert.equal(ui.get('results').hidden, false);
+  assert.match(ui.get('current-run-link').textContent, /查看本次结果/);
   await ui.get('generate-form').handlers.submit({ preventDefault() {} });
   assert.equal(starts, 2);
   assert.equal(ui.get('studio-visual').hidden, false);

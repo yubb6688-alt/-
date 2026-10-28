@@ -2,6 +2,26 @@ const $ = id => document.getElementById(id);
 const form = $('generate-form');
 let active = null;
 
+// Hash navigation keeps the in-flight job and its access code in this page's memory.
+function showPage(page, focus = false) {
+  const home = page === 'home';
+  const result = page === 'result';
+  $('home-page').hidden = !home;
+  $('studio').hidden = home;
+  $('brief-page').hidden = home || result;
+  $('result-page').hidden = home || !result;
+  if (focus) {
+    const target = result ? $('output-title') : home ? $('hero-title') : $('brief-title');
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }
+}
+function pageFromHash() {
+  return location.hash === '#result' ? 'result' : location.hash === '#studio' ? 'studio' : 'home';
+}
+window.addEventListener('hashchange', () => showPage(pageFromHash(), true));
+showPage(pageFromHash());
+
 for (const name of ['audience', 'shot']) $(name).addEventListener('input', () => {
   $(`${name}-count`).textContent = `${[...$(name).value].length} / ${name === 'audience' ? 60 : 500}`;
 });
@@ -24,6 +44,8 @@ function stop(job) {
   clearInterval(job.clock); clearInterval(job.poll); clearTimeout(job.deadline);
   job.controller.abort(); active = null;
   $('form-fields').disabled = false; $('button-label').textContent = '重新生成';
+  $('current-run-link').textContent = '查看本次结果 →';
+  $('return-brief-link').textContent = '← 返回修改需求';
   $('progress-state').hidden = true;
   $('studio-visual').hidden = true;
 }
@@ -140,15 +162,15 @@ form.addEventListener('submit', async event => {
   const job = { start: Date.now(), controller: new AbortController(), polling: false, retries: 0, nextPollAt: 0 };
   active = job;
   $('form-fields').disabled = true; $('button-label').textContent = '正在生成…';
+  $('current-run-link').hidden = false;
+  $('current-run-link').textContent = '查看生成进度 →';
+  $('return-brief-link').textContent = '← 返回查看需求';
   $('state-message').replaceChildren(); $('results').replaceChildren(); $('results').hidden = true;
   $('empty-state').hidden = true; $('progress-state').hidden = false;
   $('studio-visual').hidden = false;
   $('elapsed').textContent = '0'; $('time-progress').value = 0; badge('正在生成');
-  // The preview follows the form on narrow screens; bring progress into view.
-  if (matchMedia('(max-width: 980px)').matches) {
-    $('output-title').focus({ preventScroll: true });
-    $('output-title').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-  }
+  location.hash = '#result';
+  showPage('result', true);
   const expire = () => {
     if (active !== job) return;
     stop(job); badge('等待超时', 'warning');
