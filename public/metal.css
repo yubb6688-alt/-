@@ -160,3 +160,52 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
 @media(prefers-reduced-motion:reduce){.liquid-loader span{animation:none}}
 
 .current-run-link{display:flex;align-items:center;min-height:48px;padding:12px 16px;margin-top:22px;border:1px solid #c7b18e80;color:#e8dac0;background:#ffffff09;font-size:14px}
+
+/* On laptops the brief uses two columns, leaving every control above the fold. */
+@media(min-width:981px){
+  #studio.page-brief{padding-inline:max(calc((100vw - 1160px)/2),4vw)}
+  #studio.page-brief .workspace{max-width:1160px}
+  .page-brief .studio-intro{padding:18px 0 14px;margin-bottom:16px;gap:24px}
+  .page-brief .studio-intro h2{font-size:40px;margin-top:5px;letter-spacing:-1px}
+  .page-brief .studio-intro .eyebrow{font-size:8px;letter-spacing:1.8px}
+  .page-brief .studio-intro-copy{padding-bottom:0}
+  .page-brief .studio-intro-copy p{font-size:18px;letter-spacing:2px;margin-bottom:4px}
+  #studio.page-brief .brief{padding:22px 26px;position:relative}
+  .page-brief .brief .section-heading{padding-bottom:14px;min-height:57px}
+  .page-brief .section-heading h2{font-size:22px;margin-top:5px}
+  .page-brief .panel-number{display:none}
+  .page-brief .brief form{margin-top:17px}
+  .page-brief #form-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:'product want' 'audience shot' 'access submit';column-gap:28px;row-gap:16px;align-items:start}
+  .page-brief .product-row{grid-area:product;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px}
+  .page-brief .audience-field{grid-area:audience}
+  .page-brief .want-field{grid-area:want}
+  .page-brief .shot-field{grid-area:shot}
+  .page-brief .access-field{grid-area:access;padding-top:0}
+  .page-brief #generate-button{grid-area:submit;align-self:end;height:46px;min-height:46px;margin:0;font-size:14px}
+  .page-brief .brief .field{margin-bottom:0}
+  .page-brief .brief label{font-size:13px;margin-bottom:7px}
+  .page-brief .brief input,.page-brief .brief select{height:43px;font-size:14px;padding-block:10px}
+  .page-brief .brief textarea{height:86px;min-height:86px;resize:none;font-size:14px;padding:9px 12px;line-height:1.7}
+  .page-brief .brief .hint{margin-top:5px;font-size:11px;line-height:1.5}
+  .page-brief .brief .form-footnote{margin:12px 0 0;font-size:11px;line-height:1.5;text-align:right}
+  .page-brief .current-run-link{position:absolute;right:26px;top:27px;margin:0;min-height:36px;padding:6px 12px;font-size:12px}
+  #studio.page-brief footer{margin-top:16px;padding:15px 0;line-height:1.4}
+  .page-brief .footer-brand{font-size:16px}
+}
+@media(min-width:981px) and (max-height:800px){
+  .page-brief .studio-intro{padding:12px 0 10px;margin-bottom:12px}
+  .page-brief .studio-intro h2{font-size:32px}
+  #studio.page-brief .brief{padding:18px 24px}
+  .page-brief .brief .section-heading{padding-bottom:10px;min-height:50px}
+  .page-brief .section-heading h2{font-size:20px}
+  .page-brief .brief form{margin-top:13px}
+  .page-brief #form-fields{row-gap:12px}
+  .page-brief .brief textarea{height:72px;min-height:72px}
+  .page-brief .current-run-link{top:21px;right:24px}
+  #studio.page-brief footer{margin-top:12px;padding:10px 0}
+}
+@media(min-width:981px) and (max-height:650px){
+  .page-brief .studio-intro{display:none}
+  #studio.page-brief .workspace{padding-top:16px}
+  #studio.page-brief footer{margin-top:8px}
+}

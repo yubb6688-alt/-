@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111"><meta name="description" content="选好商品、写清受众，一次生成小红书笔记、抖音口播和详情页文案，还可按需生成配图与视频。">
-  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261028-pages1" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261028-pages1">
+  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261028-compact2" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261028-compact2">
 </head>
 <body>
   <noscript><p class="noscript-notice">请启用浏览器 JavaScript 后使用内容生成功能。封面仍可正常浏览。</p></noscript>
@@ -35,10 +35,10 @@
         <a id="current-run-link" class="current-run-link" href="#result" hidden>查看生成进度 →</a>
         <form id="generate-form">
           <fieldset id="form-fields">
-            <div class="form-row"><div class="field"><label for="product">推荐商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">推广活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11、新品上市"></div></div>
-            <div class="field"><div class="label-row"><label for="audience">目标人群 <span class="required">*</span></label><span id="audience-count" class="count">0 / 60</span></div><textarea id="audience" name="audience" rows="3" maxlength="60" required placeholder="例如：养猫的小户型上班族，想轻松打理毛发，又在意家居颜值。" aria-describedby="audience-hint"></textarea><p id="audience-hint" class="hint">写清使用场景和在意的问题，文案更有针对性。</p></div>
-            <div class="field"><label for="want">生成内容 <span class="required">*</span></label><select id="want" name="want"><option>文案 + 配图 + 视频</option><option>文案 + 配图</option><option>只要文案</option></select><p class="hint">文案包含小红书笔记、抖音口播和详情页首屏。</p></div>
-            <div class="field"><div class="label-row"><label for="shot">视频画面偏好 <span class="optional">选填</span></label><span id="shot-count" class="count">0 / 500</span></div><textarea id="shot" name="shot" rows="3" maxlength="500" placeholder="例如：阳光客厅开场，特写地面猫毛，再切到清洁过程；整体自然、生活化。不生成视频可留空。"></textarea></div>
+            <div class="form-row product-row"><div class="field"><label for="product">推荐商品 <span class="required">*</span></label><select id="product" name="product" required><option>T20 Pro 月白</option><option>T20 Pro 曜石黑</option><option>T10 月白</option><option>S1 Max 标准版</option><option>S1 Max 上下水版</option></select></div><div class="field campaign-field"><label for="campaign">推广活动</label><input id="campaign" name="campaign" value="双 11" maxlength="100" placeholder="例如：双 11、新品上市"></div></div>
+            <div class="field audience-field"><div class="label-row"><label for="audience">目标人群 <span class="required">*</span></label><span id="audience-count" class="count">0 / 60</span></div><textarea id="audience" name="audience" rows="3" maxlength="60" required placeholder="例如：养猫的小户型上班族，想轻松打理毛发，又在意家居颜值。" aria-describedby="audience-hint"></textarea><p id="audience-hint" class="hint">写清使用场景和在意的问题，文案更有针对性。</p></div>
+            <div class="field want-field"><label for="want">生成内容 <span class="required">*</span></label><select id="want" name="want"><option>文案 + 配图 + 视频</option><option>文案 + 配图</option><option>只要文案</option></select><p class="hint">文案包含小红书笔记、抖音口播和详情页首屏。</p></div>
+            <div class="field shot-field"><div class="label-row"><label for="shot">视频画面偏好 <span class="optional">选填</span></label><span id="shot-count" class="count">0 / 500</span></div><textarea id="shot" name="shot" rows="3" maxlength="500" placeholder="例如：阳光客厅开场，特写地面猫毛，再切到清洁过程；整体自然、生活化。不生成视频可留空。"></textarea></div>
             <div class="field access-field"><label for="access-code">访问口令 <span class="required">*</span></label><div class="password-wrap"><span aria-hidden="true">⌑</span><input id="access-code" name="access" type="password" required placeholder="请输入访问口令" autocomplete="off"></div></div>
             <button id="generate-button" type="submit"><span aria-hidden="true">✧</span><span id="button-label">开始创作</span><span class="button-arrow" aria-hidden="true">↗</span></button>
           </fieldset>

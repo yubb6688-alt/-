@@ -8,6 +8,7 @@ function showPage(page, focus = false) {
   const result = page === 'result';
   $('home-page').hidden = !home;
   $('studio').hidden = home;
+  $('studio').className = result ? 'page-result' : 'page-brief';
   $('brief-page').hidden = home || result;
   $('result-page').hidden = home || !result;
   if (focus) {
