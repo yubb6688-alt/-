@@ -288,7 +288,7 @@ body{isolation:isolate}
 .page-brief .brief .required{color:#7d6541}.page-brief .brief .optional,.page-brief .brief .count{color:#53514d}
 .page-brief .brief .hint,.page-brief .brief .form-footnote{color:#53514d}
 .page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{border:0;border-bottom:1px solid #4b49455c;border-radius:0;background:#f4f3f05c;color:#202020;box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color-scheme:light;transition:background .2s,border-color .2s,box-shadow .2s}
-.page-brief .brief input::placeholder,.page-brief .brief textarea::placeholder{color:#aaa8a2;opacity:1}
+.page-brief .brief input::placeholder,.page-brief .brief textarea::placeholder{color:#bbb9b3;opacity:1}
 .page-brief .brief input:focus,.page-brief .brief select:focus,.page-brief .brief textarea:focus{background:#f4f3f0b3;border-color:#806641;box-shadow:0 2px 0 #806641}
 .page-brief .brief select option{color:#202020;background:#eeede8}
 .page-brief .password-wrap>span{color:#7d6541}
