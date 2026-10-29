@@ -329,3 +329,8 @@ body{isolation:isolate}
   #studio.page-brief footer{gap:12px;padding-inline:6px;flex-wrap:wrap}.page-brief .back-top{width:auto;margin-left:auto}
 }
 @media(prefers-reduced-motion:reduce){#brief-liquid-metal{transition:none}}
+
+/* Fill the visible window below the shared masthead, including tall screens. */
+#home-page{height:calc(100vh - 60px);height:calc(100dvh - 60px);min-height:520px;max-height:none}
+@media(max-width:760px){#home-page{height:calc(100vh - 96px);height:calc(100dvh - 96px);min-height:570px}}
+@media(max-height:500px) and (orientation:landscape){#home-page{min-height:460px}}
