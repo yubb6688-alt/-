@@ -297,8 +297,12 @@ body{isolation:isolate}
 .page-brief .current-run-link{position:static;width:fit-content;margin:14px 0 0;padding:8px 14px;min-height:44px;border-radius:10px;border-color:#a98b584a;background:#f4f3f080;color:#55452d}
 #studio.page-brief footer{border-color:#35353533;margin-top:16px;padding:10px 4px;color:#56524b}
 @media(min-width:981px){
-  .page-brief .brief form{margin-top:34px}
-  #studio.page-brief footer{margin-top:47px}
+  #studio.page-brief{display:flex;flex-direction:column}
+  #studio.page-brief .workspace{display:flex;flex:1 0 auto;width:100%}
+  #studio.page-brief .brief{display:flex;flex:1;flex-direction:column}
+  .page-brief .brief form{display:flex;flex:1 0 auto;align-items:center;margin-top:34px}
+  .page-brief #form-fields{width:100%}
+  #studio.page-brief footer{flex-shrink:0;margin-top:16px}
 }
 .page-brief .footer-brand{font-size:15px;color:#49443b}.page-brief .back-top{color:#56524b}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
