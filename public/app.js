@@ -1,9 +1,13 @@
 const $ = id => document.getElementById(id);
 const form = $('generate-form');
 let active = null;
+const ARCHIVE_KEY = 'seed-studio.archive.v1';
+let archiveStorageWarning = '';
+let archiveRecords = readArchive();
+let archiveSelected = archiveRecords[0]?.id || null;
 
 function updateNavIndicator() {
-  const link = $(location.hash === '#studio' || location.hash === '#result' ? 'nav-studio' : 'nav-home');
+  const link = $(location.hash === '#archive' ? 'nav-archive' : location.hash === '#studio' || location.hash === '#result' ? 'nav-studio' : 'nav-home');
   const indicator = $('nav-indicator');
   indicator.style.width = `${link.offsetWidth}px`;
   indicator.style.transform = `translateX(${link.offsetLeft}px)`;
@@ -14,24 +18,27 @@ function updateNavIndicator() {
 function showPage(page, focus = false) {
   const home = page === 'home';
   const result = page === 'result';
+  const archive = page === 'archive';
   $('home-page').hidden = !home;
-  $('studio').hidden = home;
+  $('archive-page').hidden = !archive;
+  $('studio').hidden = home || archive;
   $('studio').className = result ? 'page-result' : 'page-brief';
-  $('brief-page').hidden = home || result;
+  $('brief-page').hidden = home || result || archive;
   $('result-page').hidden = home || !result;
-  $('nav-home').className = home ? 'nav-active' : '';
-  $('nav-studio').className = home ? '' : 'nav-active';
-  $('nav-home').setAttribute('aria-current', home ? 'page' : 'false');
-  $('nav-studio').setAttribute('aria-current', home ? 'false' : 'page');
+  for (const [id, selected] of [['nav-home', home], ['nav-studio', !home && !archive], ['nav-archive', archive]]) {
+    $(id).className = selected ? 'nav-active' : '';
+    $(id).setAttribute('aria-current', selected ? 'page' : 'false');
+  }
+  if (archive) renderArchive();
   updateNavIndicator();
   if (focus) {
-    const target = result ? $('output-title') : home ? $('hero-title') : $('brief-title');
+    const target = archive ? $('archive-title') : result ? $('output-title') : home ? $('hero-title') : $('brief-title');
     target.focus({ preventScroll: true });
-    target.scrollIntoView({ block: 'start', behavior: 'auto' });
+    (result ? target : $('top')).scrollIntoView({ block: 'start', behavior: 'auto' });
   }
 }
 function pageFromHash() {
-  return location.hash === '#result' ? 'result' : location.hash === '#studio' ? 'studio' : 'home';
+  return location.hash === '#archive' ? 'archive' : location.hash === '#result' ? 'result' : location.hash === '#studio' ? 'studio' : 'home';
 }
 window.addEventListener('hashchange', () => showPage(pageFromHash(), true));
 window.addEventListener('resize', updateNavIndicator);
@@ -49,11 +56,11 @@ function node(tag, text, className) {
   if (className) element.className = className;
   return element;
 }
-function badge(text, kind = '') { $('status-badge').textContent = text; $('status-badge').className = `badge ${kind}`; }
-function notice(title, message) {
+function badge(text, kind = '', prefix = '') { $(prefix + 'status-badge').textContent = text; $(prefix + 'status-badge').className = `badge ${kind}`; }
+function notice(title, message, prefix = '') {
   const box = node('div', null, 'notice');
   box.append(node('strong', title), node('span', message));
-  $('state-message').replaceChildren(box);
+  $(prefix + 'state-message').replaceChildren(box);
 }
 function stop(job) {
   if (active !== job) return;
@@ -100,23 +107,23 @@ function mediaCard(kind, value, description) {
   if (description) body.append(node('p', text(description), 'media-note'));
   return card(kind === 'image' ? '商品配图' : '种草视频', body);
 }
-function renderOutputs(outputs, want) {
-  $('studio-visual').hidden = true;
+function renderOutputs(outputs, want, prefix = '') {
+  if (!prefix) $('studio-visual').hidden = true;
   if (!outputs || typeof outputs !== 'object') throw new Error('工作流没有返回结果，请联系管理员检查输出配置。');
   let result = {};
   try { result = typeof outputs.result === 'string' ? JSON.parse(outputs.result) : outputs.result ?? {}; }
   catch {
-    if (outputs.verdict === '转人工') { badge('转人工', 'warning'); notice('这次内容需要人工确认', '结果格式异常，未能读取转人工原因。'); return; }
+    if (outputs.verdict === '转人工') { badge('转人工', 'warning', prefix); notice('这次内容需要人工确认', '结果格式异常，未能读取转人工原因。', prefix); return; }
     throw new Error('工作流返回的 result 不是有效 JSON，请检查输出配置。');
   }
   if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('工作流结果格式不正确。');
   // If either verdict requires review, withhold all generated material.
   if (result.verdict === '转人工' || outputs.verdict === '转人工') {
-    badge('转人工', 'warning'); notice('这次内容需要人工确认', text(result.reason) || text(result.error) || '工作流未提供原因，请联系人工审核。'); return;
+    badge('转人工', 'warning', prefix); notice('这次内容需要人工确认', text(result.reason) || text(result.error) || '工作流未提供原因，请联系人工审核。', prefix); return;
   }
   const verdict = result.verdict || outputs.verdict;
   if (verdict !== '自动通过') throw new Error(text(result.reason || result.error) || '工作流未返回有效审核结论，请联系管理员确认。');
-  badge('自动通过', 'success');
+  badge('自动通过', 'success', prefix);
   const stack = node('div', null, 'result-stack');
   const xhs = result.xhs || {}, douyin = result.douyin || {}, detail = result.detail || {};
   const tags = Array.isArray(xhs.tags) ? xhs.tags.map(text).join(' ') : text(xhs.tags);
@@ -136,8 +143,68 @@ function renderOutputs(outputs, want) {
   const videoUrl = outputs.video_url || result.video_url;
   if (imageUrl || want !== '只要文案') stack.append(mediaCard('image', imageUrl));
   if (videoUrl || want === '文案 + 配图 + 视频') stack.append(mediaCard('video', videoUrl, result.video_desc));
-  if (result.error) notice('部分内容需要留意', text(result.error));
-  $('results').replaceChildren(stack); $('results').hidden = false;
+  if (result.error) notice('部分内容需要留意', text(result.error), prefix);
+  $(prefix + 'results').replaceChildren(stack); $(prefix + 'results').hidden = false;
+}
+function archivePayload(payload) {
+  return Object.fromEntries(['product', 'campaign', 'audience', 'want', 'shot'].map(key => [key, typeof payload?.[key] === 'string' ? payload[key] : '']));
+}
+function readArchive() {
+  try {
+    const raw = localStorage.getItem(ARCHIVE_KEY);
+    if (!raw) return [];
+    const saved = JSON.parse(raw);
+    if (saved.version !== 1 || !Array.isArray(saved.records)) throw new Error('Invalid archive');
+    return saved.records.filter(record => record && typeof record.id === 'string' && Number.isFinite(record.createdAt) && record.createdAt >= 0 && record.createdAt < 8640000000000000 && record.outputs && typeof record.outputs.result === 'string')
+      .slice(0, 20).map(record => ({ id: record.id, createdAt: record.createdAt, payload: archivePayload(record.payload), outputs: record.outputs }));
+  } catch {
+    archiveStorageWarning = '浏览器暂时无法读取本地记录，新记录仍可在本次打开期间查看。';
+    return [];
+  }
+}
+function saveArchive(id, payload, outputs) {
+  // Persist only the brief and public workflow outputs, never the access code.
+  const savedOutputs = Object.fromEntries(['verdict', 'image_url', 'video_url'].map(key => [key, typeof outputs[key] === 'string' ? outputs[key] : '']));
+  savedOutputs.result = typeof outputs.result === 'string' ? outputs.result : JSON.stringify(outputs.result ?? {});
+  const record = { id, createdAt: Date.now(), payload: archivePayload(payload), outputs: savedOutputs };
+  archiveRecords = [record, ...archiveRecords.filter(item => item.id !== id)].slice(0, 20);
+  archiveSelected ||= id;
+  try {
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify({ version: 1, records: archiveRecords }));
+    archiveStorageWarning = '';
+  } catch {
+    archiveStorageWarning = '浏览器存储不可用或已满。本次记录暂存于当前页面，关闭或刷新后可能丢失。';
+  }
+  if (pageFromHash() === 'archive') renderArchive();
+}
+function renderArchive() {
+  $('archive-storage-note').textContent = archiveStorageWarning || '仅保存在当前设备的此浏览器，保留最近 20 次已完成记录，不跨设备同步。图片和视频链接可能随时间失效。';
+  $('archive-count').textContent = `${String(archiveRecords.length).padStart(2, '0')} / 已收录`;
+  $('archive-list').replaceChildren();
+  $('archive-empty').hidden = archiveRecords.length > 0;
+  $('archive-layout').hidden = archiveRecords.length === 0;
+  const record = archiveRecords.find(item => item.id === archiveSelected) || archiveRecords[0];
+  archiveSelected = record?.id || null;
+  for (const item of archiveRecords) {
+    const button = node('button', null, 'archive-entry' + (item.id === archiveSelected ? ' is-selected' : ''));
+    button.type = 'button';
+    button.setAttribute('aria-pressed', String(item.id === archiveSelected));
+    button.append(node('span', new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' }).format(item.createdAt), 'archive-date'), node('strong', item.payload.product || '未命名创作'), node('span', `${item.payload.campaign || '日常创作'} · ${item.payload.want || '内容创作'}`));
+    button.addEventListener('click', () => {
+      archiveSelected = item.id;
+      renderArchive();
+      $('archive-detail-title').focus({ preventScroll: true });
+      $('archive-detail-title').scrollIntoView({ block: 'start', behavior: 'auto' });
+    });
+    $('archive-list').append(button);
+  }
+  $('archive-results').replaceChildren(); $('archive-results').hidden = true;
+  $('archive-state-message').replaceChildren();
+  if (!record) return;
+  $('archive-detail-title').textContent = record.payload.product || '创作回顾';
+  $('archive-detail-brief').textContent = [record.payload.campaign, record.payload.audience, record.payload.shot].filter(Boolean).join(' · ');
+  try { renderOutputs(record.outputs, record.payload.want, 'archive-'); }
+  catch (error) { badge('暂不可读', 'warning', 'archive-'); notice('这份记录暂时无法展示', error.message, 'archive-'); }
 }
 async function api(path, code, job, options = {}) {
   const controller = new AbortController();
@@ -220,7 +287,7 @@ form.addEventListener('submit', async event => {
         if (Date.now() - job.start >= 360000) { expire(); return; }
         if (job.retries) { $('state-message').replaceChildren(); badge('正在生成'); }
         job.retries = 0; job.nextPollAt = 0;
-        if (data.status === 'succeeded') { renderOutputs(data.outputs, payload.want); stop(job); }
+        if (data.status === 'succeeded') { renderOutputs(data.outputs, payload.want); saveArchive(id, payload, data.outputs); stop(job); }
         else if (['failed', 'stopped', 'partial-succeeded', 'paused'].includes(data.status)) throw new Error(text(data.error) || '工作流未完成，请联系管理员检查。');
         else if (!['running', 'pending', 'queued'].includes(data.status)) throw new Error('服务返回了未知任务状态，请联系管理员。');
       } catch (error) {

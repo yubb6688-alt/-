@@ -227,3 +227,40 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
   .metal-hero{height:min(720px,calc(100svh - 64px))}
 }
 @media(max-height:500px) and (orientation:landscape){.metal-hero{height:460px}}
+
+/* Brand and descriptor form one signature; the three destinations align right. */
+.site-header{gap:20px}
+.site-header .header-note{display:flex;padding-left:20px;margin-right:auto}
+.site-header nav{flex-shrink:0;margin-left:auto;gap:30px}
+#archive-page{max-width:none;min-height:calc(100svh - 72px);padding:44px max(calc((100vw - 1120px)/2),5.5vw) 64px;background:linear-gradient(120deg,#e5e5e3,#f4f3ef 55%,#d8d9d9)}
+.archive-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;padding-bottom:28px;border-bottom:1px solid #b9b6ae}
+.archive-heading .eyebrow,.archive-detail .eyebrow{color:#8a7557;letter-spacing:2px}
+.archive-heading h1{font-family:"Songti SC","STSong",serif;font-size:42px;font-weight:400;letter-spacing:3px;margin:16px 0 12px;padding:0}
+.archive-heading h1 span{display:inline;color:#9d815a}
+.archive-heading p{color:#6a6761;font-size:13px;letter-spacing:1px;margin:0}
+#archive-count{font-family:Georgia,serif;font-size:12px;color:#80715c;white-space:nowrap;letter-spacing:1px}
+.archive-storage-note{font-size:12px;line-height:1.8;color:#77716a;margin:18px 0 28px}
+.archive-empty{text-align:center;border:1px solid #b9b6ae80;padding:70px 24px;background:#ffffff40}
+.archive-empty>span{font-size:42px;color:#aa9471}.archive-empty h2{font-family:"Songti SC","STSong",serif;font-size:26px;font-weight:400;letter-spacing:2px;margin:20px 0 14px}
+.archive-empty p{font-size:13px;line-height:2;color:#78736c}.archive-empty a{display:inline-flex;align-items:center;min-height:44px;gap:24px;border-bottom:1px solid #aa9471;font-size:13px;margin-top:18px;color:#695639}
+.archive-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start}
+.archive-list{display:flex;flex-direction:column;gap:12px;max-height:75vh;overflow-y:auto}
+.archive-entry{width:100%;min-height:108px;text-align:left;padding:18px;border:1px solid #bcb9b180;background:#ffffff45;color:#69645e;display:flex;flex-direction:column;gap:10px;overflow-wrap:anywhere}
+.archive-entry strong{font-family:"Songti SC","STSong",serif;font-size:17px;font-weight:400;color:#333}.archive-entry span{font-size:11px;line-height:1.6}.archive-entry .archive-date{font-size:10px;letter-spacing:.5px;color:#8c7b62}
+.archive-entry:hover{border-color:#aa9471}.archive-entry.is-selected{background:#242426;border-color:#242426;color:#bcb6ac}.archive-entry.is-selected strong{color:#f3eee5}.archive-entry.is-selected .archive-date{color:#c5b18d}
+.archive-detail{min-width:0;border:1px solid #b9b6ae80;background:#fff7;padding:26px}
+.archive-detail>header{display:flex;align-items:center;justify-content:space-between;gap:16px}.archive-detail h2{font-family:"Songti SC","STSong",serif;font-size:24px;font-weight:400;line-height:1.5;overflow-wrap:anywhere}
+#archive-detail-brief{font-size:12px;color:#767068;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;border-bottom:1px solid #b9b6ae80;padding-bottom:20px;margin:16px 0 24px}
+.archive-detail .result-stack{padding:0}.archive-detail .notice{margin:0 0 20px}.archive-detail .result-card:last-child{margin-bottom:0}
+@media(max-width:760px){
+  .site-header{height:108px;flex-wrap:wrap;gap:0 12px;padding-block:8px}
+  .site-header .header-note{display:flex;margin-right:0;padding-left:12px;font-size:6.5px;letter-spacing:1px}
+  .site-header nav{width:100%;height:44px;justify-content:flex-end;gap:24px}
+  .site-header nav a:first-child{display:flex}
+  #nav-indicator{bottom:3px}
+  #studio,#archive-page{min-height:calc(100svh - 108px)}
+  .metal-hero{height:min(720px,calc(100svh - 108px))}
+  #archive-page{padding:30px 16px 40px}.archive-heading{gap:12px;padding-bottom:22px}.archive-heading h1{font-size:30px}.archive-heading .eyebrow{font-size:8px;letter-spacing:1px}
+  #archive-count{font-size:10px}.archive-layout{grid-template-columns:minmax(0,1fr);gap:20px}.archive-list{max-height:250px}.archive-detail{padding:20px 16px}.archive-detail>header{align-items:start;flex-wrap:wrap}.archive-empty{padding:46px 16px}.archive-empty h2{font-size:22px}
+}
+@media(max-height:500px) and (orientation:landscape){.metal-hero{height:460px}}

@@ -17,11 +17,12 @@ class Element {
   scrollIntoView(options) { this.scrolled = options; }
   set innerHTML(value) { throw new Error('Generated text must never enter innerHTML'); }
 }
-function setup({ narrow = false } = {}) {
+function setup({ narrow = false, storage = new Map(), storageThrows = false, hash = '' } = {}) {
   const elements = new Map(), timers = new Map(); let counter = 0, time = 1000000;
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
   const context = vm.createContext({ document: { getElementById: get, createElement: tag => new Element(tag) }, URL, AbortController, navigator: { clipboard: { writeText: async () => {} } }, Date: { now: () => time }, setInterval(fn, ms) { const id = ++counter; timers.set(id, { fn, ms, interval: true }); return id; }, clearInterval(id) { timers.delete(id); }, setTimeout(fn, ms) { const id = ++counter; timers.set(id, { fn, ms }); return id; }, clearTimeout(id) { timers.delete(id); }, fetch: async () => ({ ok: true, json: async () => ({ id: 'run-1' }) }) });
-  context.location = { hash: '' };
+  context.localStorage = { getItem: key => storage.get(key) ?? null, setItem(key, value) { if (storageThrows) throw new Error('Storage unavailable'); storage.set(key, value); } };
+  context.location = { hash };
   context.window = { handlers: {}, addEventListener(name, fn) { this.handlers[name] = fn; } };
   context.matchMedia = query => ({ matches: query.includes('max-width') ? narrow : false });
   vm.runInContext(source, context);
@@ -170,4 +171,62 @@ test('reconnection respects the original deadline, ignores late responses, and n
   await offline.get('generate-form').handlers.submit({ preventDefault() {} });
   assert.equal(attempts, 1); assert.equal(offline.timers.size, 0);
   assert.match(flatten(offline.get('state-message')), /避免重复生成/);
+});
+
+
+test('completed jobs are archived without credentials and survive a browser reload', async () => {
+  const storage = new Map(), ui = setup({ storage });
+  ui.get('audience').value = '小户型'; ui.get('want').value = '只要文案';
+  ui.get('access-code').value = 'never-save-this-code';
+  ui.context.fetch = async path => ({ ok: true, json: async () => path === '/api/start' ? { id: 'saved-run' } : { status: 'succeeded', outputs: { result: JSON.stringify({ verdict: '自动通过', xhs: { title: '<script>literal</script>', body: '文案' } }), private_field: 'do-not-save' } } });
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  ui.context.location.hash = '#archive'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('studio').hidden, true);
+  await [...ui.timers.values()].find(t => t.ms === 5000).fn();
+  assert.equal(ui.get('archive-page').hidden, false);
+  assert.equal(ui.get('nav-archive').attributes['aria-current'], 'page');
+  const saved = storage.get('seed-studio.archive.v1');
+  assert.ok(saved); assert.equal(saved.includes('never-save-this-code'), false); assert.equal(saved.includes('do-not-save'), false);
+  const restored = setup({ storage, hash: '#archive' });
+  assert.equal(restored.get('archive-list').children.length, 1);
+  assert.match(flatten(restored.get('archive-results')), /<script>literal<\/script>/);
+  assert.equal(restored.get('archive-empty').hidden, true);
+});
+
+test('browsing old records never replaces a running job or its result panel', async () => {
+  const ui = setup();
+  ui.run('saveArchive("old", {product:"T10 月白",want:"只要文案"}, {result: JSON.stringify({verdict:"自动通过",xhs:{title:"旧作"}})})');
+  ui.get('audience').value = '上班族';
+  await ui.get('generate-form').handlers.submit({ preventDefault() {} });
+  ui.context.location.hash = '#archive'; ui.context.window.handlers.hashchange();
+  ui.get('archive-list').children[0].handlers.click();
+  assert.equal(ui.get('status-badge').textContent, '正在生成');
+  assert.equal(ui.get('progress-state').hidden, false);
+  assert.equal(ui.get('results').children.length, 0);
+  assert.match(flatten(ui.get('archive-results')), /旧作/);
+  ui.context.location.hash = '#result'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('result-page').hidden, false);
+  assert.equal(ui.get('form-fields').disabled, true);
+});
+
+test('archive caps and deduplicates records; review content remains withheld on replay', () => {
+  const storage = new Map(), ui = setup({ storage });
+  ui.run('for(let i=0;i<25;i++) saveArchive(String(i),{product:"T20 Pro 月白"},{result:JSON.stringify({verdict:"自动通过"})})');
+  ui.run('saveArchive("24",{}, {verdict:"转人工",result:JSON.stringify({verdict:"自动通过",reason:"待核实",xhs:{title:"禁止展示"}})})');
+  const records = JSON.parse(storage.get('seed-studio.archive.v1')).records;
+  assert.equal(records.length,20); assert.equal(records[0].id,'24'); assert.equal(new Set(records.map(r=>r.id)).size,20);
+  const restored = setup({ storage, hash:'#archive' });
+  assert.equal(restored.get('archive-status-badge').textContent,'转人工');
+  assert.equal(restored.get('archive-results').children.length,0);
+  assert.match(flatten(restored.get('archive-state-message')),/待核实/);
+});
+
+test('invalid or full browser storage does not break navigation or discard current-session records', () => {
+  const storage = new Map([['seed-studio.archive.v1','broken JSON']]);
+  const ui = setup({ storage, storageThrows:true, hash:'#archive' });
+  assert.equal(ui.get('archive-empty').hidden,false);
+  ui.run('saveArchive("current",{}, {result:JSON.stringify({verdict:"自动通过"})})');
+  assert.equal(ui.get('archive-list').children.length,1);
+  assert.match(ui.get('archive-storage-note').textContent,/存储不可用或已满/);
+  assert.equal(ui.get('archive-empty').hidden,true);
 });

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111"><meta name="description" content="选好商品、写清受众，一次生成小红书笔记、抖音口播和详情页文案，还可按需生成配图与视频。">
-  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261028-nav3" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261029-header1">
+  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261029-archive1" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261029-archive1">
 </head>
 <body>
   <noscript><p class="noscript-notice">请启用浏览器 JavaScript 后使用内容生成功能。封面仍可正常浏览。</p></noscript>
   <header class="site-header" id="top">
     <a href="#top" class="brand" aria-label="SEED STUDIO 首页"><img class="brand-mark" src="/logo.svg" width="40" height="40" alt=""><span class="brand-wordmark">SEED STUDIO</span></a>
-    <nav aria-label="主导航"><a id="nav-home" class="nav-active" href="#top" aria-current="page">首页</a><a id="nav-studio" href="#studio">创作工作台 <span aria-hidden="true">↗</span></a><span id="nav-indicator" aria-hidden="true"></span></nav>
     <span class="header-note" title="AI 内容创作工作室">AI CONTENT STUDIO</span>
+    <nav aria-label="主导航"><a id="nav-home" class="nav-active" href="#top" aria-current="page">首页</a><a id="nav-studio" href="#studio">创作工作台 <span aria-hidden="true">↗</span></a><a id="nav-archive" href="#archive">灵感典藏</a><span id="nav-indicator" aria-hidden="true"></span></nav>
   </header>
   <section id="home-page" class="metal-hero" aria-labelledby="hero-title">
     <picture><source srcset="/hero-liquid-cover.webp" type="image/webp"><img class="hero-art" src="/hero-liquid-cover.jpg" width="1942" height="809" alt="" aria-hidden="true" fetchpriority="high" decoding="async"></picture>
@@ -80,6 +80,15 @@
       </section>
     </div>
     <footer><a href="#top" class="footer-brand">SEED STUDIO</a><span>好产品，值得好好说。</span><a href="#top" class="back-top">回到顶部 ↑</a></footer>
+  </main>
+  <main id="archive-page" hidden aria-labelledby="archive-title">
+    <header class="archive-heading"><div><span class="eyebrow">THE COLLECTION / 创作留存</span><h1 id="archive-title" tabindex="-1">灵感典藏<span>.</span></h1><p>让每一次灵感，都有迹可循。</p></div><span id="archive-count"></span></header>
+    <p id="archive-storage-note" class="archive-storage-note" role="status"></p>
+    <section id="archive-empty" class="archive-empty"><span aria-hidden="true">✧</span><h2>下一份灵感，值得珍藏。</h2><p>从本次更新起，生成完成的内容会自动收录在这里。<br>此前的生成记录暂不支持补回。</p><a href="#studio">开启一次创作 ↗</a></section>
+    <div id="archive-layout" class="archive-layout" hidden>
+      <div id="archive-list" class="archive-list" aria-label="已完成的创作记录"></div>
+      <section class="archive-detail" aria-labelledby="archive-detail-title"><header><div><span class="eyebrow">A STORY REVISITED</span><h2 id="archive-detail-title" tabindex="-1"></h2></div><span id="archive-status-badge" class="badge"></span></header><p id="archive-detail-brief"></p><div id="archive-state-message" aria-live="polite"></div><div id="archive-results" hidden></div></section>
+    </div>
   </main>
 </body>
 </html>
