@@ -22,7 +22,7 @@ html{scroll-behavior:smooth;scroll-padding-top:30px}
 .hero-description{font-size:12px;font-weight:400;letter-spacing:2px;line-height:2;color:#3f3e3c;margin:0 0 30px;max-width:320px}
 .hero-cta{display:flex;width:163px;align-items:center;justify-content:space-between;border-bottom:1px solid #55534e;padding:12px 0;font-size:12px;letter-spacing:3px;transition:width .25s}
 .hero-cta:hover{width:180px}.hero-cta span{font-size:19px;letter-spacing:0}
-.hero-bottom{position:absolute;bottom:26px;left:5.5%;right:5.5%;display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:9px;letter-spacing:2px;color:#454442}
+.hero-bottom{position:absolute;bottom:26px;left:5.5%;right:5.5%;display:flex;justify-content:flex-end;align-items:center;gap:20px;font-size:9px;letter-spacing:2px;color:#454442}
 #motion-toggle{display:flex;align-items:center;gap:9px;background:#f5f4ef40;border:1px solid #25252530;border-radius:30px;padding:9px 13px;color:#333;font-size:10px;letter-spacing:1px;backdrop-filter:blur(8px)}
 #motion-toggle:hover{background:#ffffff90}.play-icon{display:none}.is-paused .pause-icon{display:none}.is-paused .play-icon{display:block}
 .metal-fallback{overflow:hidden;background:linear-gradient(115deg,#b5b6b7,#e3e3e1)}
@@ -210,14 +210,14 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
 }
 
 /* Half-size brand signature, with a full-size touch target and a quiet masthead. */
-.site-header{height:72px;gap:32px}
+.site-header{height:60px;gap:32px}
 .site-header .brand{gap:6px;min-height:44px}
 .site-header .brand-mark{width:16.5px;height:16.5px}
 .site-header .brand-wordmark{font-size:13.5px;letter-spacing:.8px}
 .site-header nav{gap:32px}
 .site-header .header-note{margin-left:0;padding-left:26px;border-left:1px solid #e8dac033;min-height:24px;font-size:8px;letter-spacing:1.8px;white-space:nowrap}
-#nav-indicator{bottom:16px}
-#studio{min-height:calc(100svh - 72px)}
+#nav-indicator{bottom:10px}
+#studio{min-height:calc(100svh - 60px)}
 @media(max-width:760px){
   .site-header{height:64px;gap:16px}
   .site-header nav{gap:0}
@@ -232,7 +232,7 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
 .site-header{gap:20px}
 .site-header .header-note{display:flex;padding-left:20px;margin-right:auto}
 .site-header nav{flex-shrink:0;margin-left:auto;gap:30px}
-#archive-page{max-width:none;min-height:calc(100svh - 72px);padding:44px max(calc((100vw - 1120px)/2),5.5vw) 64px;background:linear-gradient(120deg,#e5e5e3,#f4f3ef 55%,#d8d9d9)}
+#archive-page{max-width:none;min-height:calc(100svh - 60px);padding:44px max(calc((100vw - 1120px)/2),5.5vw) 64px;background:linear-gradient(120deg,#e5e5e3,#f4f3ef 55%,#d8d9d9)}
 .archive-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;padding-bottom:28px;border-bottom:1px solid #b9b6ae}
 .archive-heading .eyebrow,.archive-detail .eyebrow{color:#8a7557;letter-spacing:2px}
 .archive-heading h1{font-family:"Songti SC","STSong",serif;font-size:42px;font-weight:400;letter-spacing:3px;margin:16px 0 12px;padding:0}
@@ -253,13 +253,13 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
 #archive-detail-brief{font-size:12px;color:#767068;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;border-bottom:1px solid #b9b6ae80;padding-bottom:20px;margin:16px 0 24px}
 .archive-detail .result-stack{padding:0}.archive-detail .notice{margin:0 0 20px}.archive-detail .result-card:last-child{margin-bottom:0}
 @media(max-width:760px){
-  .site-header{height:108px;flex-wrap:wrap;gap:0 12px;padding-block:8px}
+  .site-header{height:96px;flex-wrap:wrap;gap:0 12px;padding-block:4px}
   .site-header .header-note{display:flex;margin-right:0;padding-left:12px;font-size:6.5px;letter-spacing:1px}
   .site-header nav{width:100%;height:44px;justify-content:flex-end;gap:24px}
   .site-header nav a:first-child{display:flex}
   #nav-indicator{bottom:3px}
-  #studio,#archive-page{min-height:calc(100svh - 108px)}
-  .metal-hero{height:min(720px,calc(100svh - 108px))}
+  #studio,#archive-page{min-height:calc(100svh - 96px)}
+  .metal-hero{height:min(720px,calc(100svh - 96px))}
   #archive-page{padding:30px 16px 40px}.archive-heading{gap:12px;padding-bottom:22px}.archive-heading h1{font-size:30px}.archive-heading .eyebrow{font-size:8px;letter-spacing:1px}
   #archive-count{font-size:10px}.archive-layout{grid-template-columns:minmax(0,1fr);gap:20px}.archive-list{max-height:250px}.archive-detail{padding:20px 16px}.archive-detail>header{align-items:start;flex-wrap:wrap}.archive-empty{padding:46px 16px}.archive-empty h2{font-size:22px}
 }
