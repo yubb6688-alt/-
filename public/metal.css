@@ -287,7 +287,7 @@ body{isolation:isolate}
 .page-brief .brief label{color:#252525;font-size:12px;letter-spacing:.5px;font-weight:500}
 .page-brief .brief .required{color:#7d6541}.page-brief .brief .optional,.page-brief .brief .count{color:#53514d}
 .page-brief .brief .hint,.page-brief .brief .form-footnote{color:#53514d}
-.page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{border:0;border-bottom:1px solid #4b49455c;border-radius:0;background:#f4f3f05c;color:#202020;box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color-scheme:light;transition:background .2s,border-color .2s,box-shadow .2s}
+.page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{border:0;border-bottom:1px solid #4b49455c;border-radius:12px;background:#f4f3f05c;color:#202020;box-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color-scheme:light;transition:background .2s,border-color .2s,box-shadow .2s}
 .page-brief .brief input::placeholder,.page-brief .brief textarea::placeholder{color:#bbb9b3;opacity:1}
 .page-brief .brief input:focus,.page-brief .brief select:focus,.page-brief .brief textarea:focus{background:#f4f3f0b3;border-color:#806641;box-shadow:0 2px 0 #806641}
 .page-brief .brief select option{color:#202020;background:#eeede8}
@@ -338,10 +338,9 @@ body{isolation:isolate}
 /* Accessible custom menus, matching the silver and champagne workbench. */
 .studio-select{position:relative;min-width:0}
 .studio-select.is-open{z-index:20}
-.page-brief .select-trigger{width:100%;min-height:46px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:14px;border:0;border-bottom:1px solid #4b49455c;border-radius:0;background:#f4f3f05c;color:#202020;font:inherit;font-size:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.page-brief .select-trigger:focus{outline:none}
-.page-brief .select-trigger:focus-visible{box-shadow:0 2px 0 #806641}
-.studio-select.is-open .select-trigger{background:#f4f3f0b3}
+.page-brief .select-trigger{width:100%;min-height:46px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:14px;border:0;border-bottom:1px solid #4b49455c;border-radius:12px;background:#f4f3f05c;color:#202020;font:inherit;font-size:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.page-brief .select-trigger{transition:background .2s,border-color .2s,box-shadow .2s}
+.page-brief .select-trigger:focus,.page-brief .studio-select.is-open .select-trigger{outline:none;background:#f4f3f0b3;border-color:#806641;box-shadow:0 2px 0 #806641}
 .select-chevron{width:7px;height:7px;border-right:1px solid #6f604a;border-bottom:1px solid #6f604a;transform:rotate(45deg);margin-right:4px;margin-top:-4px;transition:transform .18s}
 .is-open .select-chevron{transform:rotate(225deg);margin-top:4px}
 .select-options{position:absolute;top:calc(100% + 8px);left:0;right:0;padding:6px;border:1px solid #ffffffb3;border-radius:12px;background:#efede7f5;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 12px 32px #27231c29,inset 0 1px 0 #fff8;color:#292723}
@@ -352,9 +351,3 @@ body{isolation:isolate}
 @media(min-width:981px){.page-brief .select-trigger{height:43px;min-height:43px;padding:10px 12px;font-size:14px}}
 @media(max-width:760px){.select-option{font-size:16px;min-height:48px}}
 @media(prefers-reduced-motion:reduce){.select-chevron{transition:none}}
-
-/* The content selector echoes the campaign field with an extending gold underline. */
-.page-brief #want-trigger{position:relative;box-shadow:none}
-#want-trigger::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:#806641;transform:scaleY(0);transform-origin:top;transition:transform .3s ease;pointer-events:none}
-#want-trigger:focus::after,.studio-select.is-open #want-trigger::after{transform:scaleY(1)}
-@media(prefers-reduced-motion:reduce){#want-trigger::after{transition:none}}
