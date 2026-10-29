@@ -296,7 +296,10 @@ body{isolation:isolate}
 .page-brief #generate-button:hover{background:linear-gradient(110deg,#d2bd9c,#f0e4ce 50%,#dbc5a3);box-shadow:inset 0 1px #fff,0 8px 20px #8f744a29}
 .page-brief .current-run-link{position:static;width:fit-content;margin:14px 0 0;padding:8px 14px;min-height:44px;border-radius:10px;border-color:#a98b584a;background:#f4f3f080;color:#55452d}
 #studio.page-brief footer{border-color:#35353533;margin-top:16px;padding:10px 4px;color:#56524b}
-@media(min-width:981px){#studio.page-brief footer{margin-top:36px}}
+@media(min-width:981px){
+  .page-brief .brief form{margin-top:34px}
+  #studio.page-brief footer{margin-top:47px}
+}
 .page-brief .footer-brand{font-size:15px;color:#49443b}.page-brief .back-top{color:#56524b}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{background:#e9e8e2e6}
@@ -306,7 +309,7 @@ body{isolation:isolate}
   #studio.page-brief .brief{padding:18px 26px}
   .page-brief .brief .section-heading{padding-bottom:10px}.page-brief .brief h2{font-size:22px}
   .page-brief .brief-caption{margin-top:5px}
-  .page-brief .brief form{margin-top:14px}.page-brief #form-fields{row-gap:12px;column-gap:28px}
+  .page-brief .brief form{margin-top:27px}.page-brief #form-fields{row-gap:12px;column-gap:28px}
   .page-brief .brief textarea{height:72px;min-height:72px}
   .page-brief .brief .form-footnote{margin-top:10px}
 }
@@ -330,6 +333,21 @@ body{isolation:isolate}
   #studio.page-brief footer{gap:12px;padding-inline:6px;flex-wrap:wrap}.page-brief .back-top{width:auto;margin-left:auto}
 }
 @media(prefers-reduced-motion:reduce){#brief-liquid-metal{transition:none}}
+
+/* Match the workbench's content width and compact desktop proportions. */
+@media(min-width:981px){
+  #archive-page{display:flex;flex-direction:column;padding:32px max(calc((100vw - 1160px)/2),4vw) 40px}
+  #archive-page>header,#archive-page>.archive-storage-note,#archive-page>.archive-empty,#archive-page>.archive-layout{margin-inline:26px}
+  .archive-heading{padding-bottom:10px}
+  .archive-heading .eyebrow{font-size:9px;letter-spacing:2px}
+  .archive-heading h1{font-size:25px;letter-spacing:2px;margin:7px 0 0}
+  .archive-storage-note{font-size:11px;margin-block:14px 18px}
+  .archive-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px}
+  .archive-empty>span{font-size:32px}
+  .archive-empty h2{font-size:22px;margin:12px 0 8px}
+  .archive-empty p{font-size:12px}
+  .archive-empty a{font-size:12px;margin-top:10px}
+}
 
 /* Fill the visible window below the shared masthead, including tall screens. */
 #home-page{height:calc(100vh - 60px);height:calc(100dvh - 60px);min-height:520px;max-height:none}
