@@ -52,7 +52,7 @@ test('home, brief and result are separate screens; navigation preserves an activ
   assert.equal(ui.get('form-fields').disabled, true);
   assert.equal(ui.get('current-run-link').hidden, false);
   assert.match(ui.get('current-run-link').textContent, /查看生成进度/);
-  assert.match(ui.get('return-brief-link').textContent, /返回查看需求/);
+  assert.match(ui.get('return-brief-link').textContent, /查看需求/);
   ui.context.location.hash = '#result'; ui.context.window.handlers.hashchange();
   assert.equal(ui.get('progress-state').hidden, false);
 });
@@ -82,7 +82,7 @@ test('manual review withholds content even when verdict fields conflict', () => 
 });
 test('invalid JSON and unknown verdict fail explicitly', () => {
   const ui = setup();
-  assert.throws(() => ui.run('renderOutputs({result:"invalid"}, "只要文案")'), /JSON/);
+  assert.throws(() => ui.run('renderOutputs({result:"invalid"}, "只要文案")'), /无法读取/);
   assert.throws(() => ui.run('renderOutputs({result:"{}"}, "只要文案")'), /审核结论/);
 });
 test('5-second polling interval and hard 6-minute timeout restore the form and abort work', async () => {

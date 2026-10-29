@@ -75,7 +75,7 @@ function stop(job) {
   job.controller.abort(); active = null;
   $('form-fields').disabled = false; $('button-label').textContent = '重新生成';
   $('current-run-link').textContent = '查看本次结果 →';
-  $('return-brief-link').textContent = '← 返回修改需求';
+  $('return-brief-link').textContent = '← 修改需求';
   $('progress-state').hidden = true;
   $('studio-visual').hidden = true;
 }
@@ -107,29 +107,29 @@ function mediaCard(kind, value, description) {
     if (kind === 'image') { media.alt = '生成的商品配图'; media.loading = 'lazy'; media.referrerPolicy = 'no-referrer'; }
     else { media.controls = true; media.preload = 'metadata'; media.playsInline = true; }
     media.src = url;
-    media.addEventListener('error', () => { media.hidden = true; body.prepend(node('p', '媒体暂时无法加载，请尝试打开原链接。')); }, { once: true });
+    media.addEventListener('error', () => { media.hidden = true; body.prepend(node('p', '加载失败，请打开原链接查看。')); }, { once: true });
     const link = node('a', '打开原链接 ↗', 'media-link'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
     body.append(media, link);
-  } else body.append(node('p', value ? '媒体链接无效，暂时无法展示。' : '本次未返回该素材。'));
+  } else body.append(node('p', value ? '素材链接无效。' : '未生成此素材。'));
   if (description) body.append(node('p', text(description), 'media-note'));
   return card(kind === 'image' ? '商品配图' : '种草视频', body);
 }
 function renderOutputs(outputs, want, prefix = '') {
   if (!prefix) $('studio-visual').hidden = true;
-  if (!outputs || typeof outputs !== 'object') throw new Error('工作流没有返回结果，请联系管理员检查输出配置。');
+  if (!outputs || typeof outputs !== 'object') throw new Error('未收到创作结果，请联系管理员。');
   let result = {};
   try { result = typeof outputs.result === 'string' ? JSON.parse(outputs.result) : outputs.result ?? {}; }
   catch {
-    if (outputs.verdict === '转人工') { badge('转人工', 'warning', prefix); notice('这次内容需要人工确认', '结果格式异常，未能读取转人工原因。', prefix); return; }
-    throw new Error('工作流返回的 result 不是有效 JSON，请检查输出配置。');
+    if (outputs.verdict === '转人工') { badge('转人工', 'warning', prefix); notice('需要人工审核', '审核原因暂时无法读取。', prefix); return; }
+    throw new Error('结果无法读取，请联系管理员。');
   }
-  if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('工作流结果格式不正确。');
+  if (!result || typeof result !== 'object' || Array.isArray(result)) throw new Error('结果格式异常，请联系管理员。');
   // If either verdict requires review, withhold all generated material.
   if (result.verdict === '转人工' || outputs.verdict === '转人工') {
-    badge('转人工', 'warning', prefix); notice('这次内容需要人工确认', text(result.reason) || text(result.error) || '工作流未提供原因，请联系人工审核。', prefix); return;
+    badge('转人工', 'warning', prefix); notice('需要人工审核', text(result.reason) || text(result.error) || '未提供原因，请联系管理员审核。', prefix); return;
   }
   const verdict = result.verdict || outputs.verdict;
-  if (verdict !== '自动通过') throw new Error(text(result.reason || result.error) || '工作流未返回有效审核结论，请联系管理员确认。');
+  if (verdict !== '自动通过') throw new Error(text(result.reason || result.error) || '未收到审核结论，请联系管理员。');
   badge('自动通过', 'success', prefix);
   const stack = node('div', null, 'result-stack');
   const xhs = result.xhs || {}, douyin = result.douyin || {}, detail = result.detail || {};
@@ -150,7 +150,7 @@ function renderOutputs(outputs, want, prefix = '') {
   const videoUrl = outputs.video_url || result.video_url;
   if (imageUrl || want !== '只要文案') stack.append(mediaCard('image', imageUrl));
   if (videoUrl || want === '文案 + 配图 + 视频') stack.append(mediaCard('video', videoUrl, result.video_desc));
-  if (result.error) notice('部分内容需要留意', text(result.error), prefix);
+  if (result.error) notice('部分内容异常', text(result.error), prefix);
   $(prefix + 'results').replaceChildren(stack); $(prefix + 'results').hidden = false;
 }
 function archivePayload(payload) {
@@ -165,7 +165,7 @@ function readArchive() {
     return saved.records.filter(record => record && typeof record.id === 'string' && Number.isFinite(record.createdAt) && record.createdAt >= 0 && record.createdAt < 8640000000000000 && record.outputs && typeof record.outputs.result === 'string')
       .slice(0, 20).map(record => ({ id: record.id, createdAt: record.createdAt, payload: archivePayload(record.payload), outputs: record.outputs }));
   } catch {
-    archiveStorageWarning = '浏览器暂时无法读取本地记录，新记录仍可在本次打开期间查看。';
+    archiveStorageWarning = '本地记录读取失败。新记录仍可在当前页面查看。';
     return [];
   }
 }
@@ -180,13 +180,13 @@ function saveArchive(id, payload, outputs) {
     localStorage.setItem(ARCHIVE_KEY, JSON.stringify({ version: 1, records: archiveRecords }));
     archiveStorageWarning = '';
   } catch {
-    archiveStorageWarning = '浏览器存储不可用或已满。本次记录暂存于当前页面，关闭或刷新后可能丢失。';
+    archiveStorageWarning = '存储不可用或已满，记录仅暂存在当前页面，刷新或关闭后可能丢失。';
   }
   if (pageFromHash() === 'archive') renderArchive();
 }
 function renderArchive() {
-  $('archive-storage-note').textContent = archiveStorageWarning || '仅保存在当前设备的此浏览器，保留最近 20 次已完成记录，不跨设备同步。图片和视频链接可能随时间失效。';
-  $('archive-count').textContent = `${String(archiveRecords.length).padStart(2, '0')} / 已收录`;
+  $('archive-storage-note').textContent = archiveStorageWarning || '最近 20 次记录仅保存在此浏览器，不跨设备同步。图片、视频链接可能过期。';
+  $('archive-count').textContent = `${archiveRecords.length} 条记录`;
   $('archive-list').replaceChildren();
   $('archive-empty').hidden = archiveRecords.length > 0;
   $('archive-layout').hidden = archiveRecords.length === 0;
@@ -211,7 +211,7 @@ function renderArchive() {
   $('archive-detail-title').textContent = record.payload.product || '创作回顾';
   $('archive-detail-brief').textContent = [record.payload.campaign, record.payload.audience, record.payload.shot].filter(Boolean).join(' · ');
   try { renderOutputs(record.outputs, record.payload.want, 'archive-'); }
-  catch (error) { badge('暂不可读', 'warning', 'archive-'); notice('这份记录暂时无法展示', error.message, 'archive-'); }
+  catch (error) { badge('暂不可读', 'warning', 'archive-'); notice('记录暂时无法查看', error.message, 'archive-'); }
 }
 async function api(path, code, job, options = {}) {
   const controller = new AbortController();
@@ -246,7 +246,7 @@ async function api(path, code, job, options = {}) {
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (active || !form.reportValidity()) return;
-  if (!$('audience').value.trim()) { $('audience').setCustomValidity('请填写目标人群，不能只输入空格。'); $('audience').reportValidity(); return; }
+  if (!$('audience').value.trim()) { $('audience').setCustomValidity('请填写有效的目标人群。'); $('audience').reportValidity(); return; }
   const payload = Object.fromEntries(['product', 'campaign', 'audience', 'want', 'shot'].map(key => [key, $(key).value.trim()]));
   const code = $('access-code').value;
   const job = { start: Date.now(), controller: new AbortController(), polling: false, retries: 0, nextPollAt: 0 };
@@ -254,7 +254,7 @@ form.addEventListener('submit', async event => {
   $('form-fields').disabled = true; $('button-label').textContent = '正在生成…';
   $('current-run-link').hidden = false;
   $('current-run-link').textContent = '查看生成进度 →';
-  $('return-brief-link').textContent = '← 返回查看需求';
+  $('return-brief-link').textContent = '← 查看需求';
   $('state-message').replaceChildren(); $('results').replaceChildren(); $('results').hidden = true;
   $('empty-state').hidden = true; $('progress-state').hidden = false;
   $('studio-visual').hidden = false;
@@ -264,7 +264,7 @@ form.addEventListener('submit', async event => {
   const expire = () => {
     if (active !== job) return;
     stop(job); badge('等待超时', 'warning');
-    notice('已等待 6 分钟', '本次已停止查询。后台任务可能仍在运行，请稍后联系管理员确认，避免重复生成。');
+    notice('已等待 6 分钟', '已停止查询，后台可能仍在生成。请联系管理员确认，避免重复生成。');
   };
   job.clock = setInterval(() => {
     const seconds = Math.floor((Date.now() - job.start) / 1000);
@@ -275,14 +275,14 @@ form.addEventListener('submit', async event => {
   const fail = error => {
     if (active !== job) return;
     stop(job); badge('生成未完成', 'warning');
-    notice('这次没能完成生成', error.networkFailure
-      ? '连接中断，暂时无法确认任务状态。后台可能仍在处理，请先联系管理员确认，避免重复生成。'
+    notice('生成未完成', error.networkFailure
+      ? '连接中断，后台状态待确认。请联系管理员，避免重复生成。'
       : error.message);
   };
   try {
     const { id } = await api('/api/start', code, job, { method: 'POST', body: JSON.stringify(payload) });
     if (active !== job) return;
-    if (!id || typeof id !== 'string') throw new Error('服务没有返回任务 ID。');
+    if (!id || typeof id !== 'string') throw new Error('未获取到任务信息，请联系管理员。');
     job.poll = setInterval(async () => {
       if (active !== job || job.polling) return;
       if (Date.now() - job.start >= 360000) { expire(); return; }
@@ -295,8 +295,8 @@ form.addEventListener('submit', async event => {
         if (job.retries) { $('state-message').replaceChildren(); badge('正在生成'); }
         job.retries = 0; job.nextPollAt = 0;
         if (data.status === 'succeeded') { renderOutputs(data.outputs, payload.want); saveArchive(id, payload, data.outputs); stop(job); }
-        else if (['failed', 'stopped', 'partial-succeeded', 'paused'].includes(data.status)) throw new Error(text(data.error) || '工作流未完成，请联系管理员检查。');
-        else if (!['running', 'pending', 'queued'].includes(data.status)) throw new Error('服务返回了未知任务状态，请联系管理员。');
+        else if (['failed', 'stopped', 'partial-succeeded', 'paused'].includes(data.status)) throw new Error(text(data.error) || '生成未完成，请联系管理员。');
+        else if (!['running', 'pending', 'queued'].includes(data.status)) throw new Error('任务状态异常，请联系管理员。');
       } catch (error) {
         if (active !== job) return;
         if (Date.now() - job.start >= 360000) { expire(); return; }
@@ -305,7 +305,7 @@ form.addEventListener('submit', async event => {
           const delay = Math.min(5000 * 2 ** Math.min(job.retries++, 3), 30000);
           job.nextPollAt = Date.now() + delay;
           badge('正在重连', 'warning');
-          notice('连接暂时中断', `将在 ${delay / 1000} 秒后自动继续查询，请保持页面打开。不会重复提交生成任务。`);
+          notice('连接暂时中断', `将在 ${delay / 1000} 秒后自动重连，请保持页面打开，无需重新提交。`);
         } else fail(error);
       }
       finally { job.polling = false; }
