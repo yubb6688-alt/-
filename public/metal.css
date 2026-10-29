@@ -265,7 +265,7 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
 }
 @media(max-height:500px) and (orientation:landscape){.metal-hero{height:460px}}
 
-/* A full-viewport liquid backdrop and a legible, softly lit glass workbench. */
+/* A full-viewport liquid backdrop and a smoked-glass workbench in the homepage palette. */
 body{isolation:isolate}
 #brief-backdrop{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#c8c9c9;pointer-events:none}
 #brief-backdrop img,#brief-liquid-metal,.brief-backdrop-veil{position:absolute;inset:0;width:100%;height:100%}
@@ -273,40 +273,35 @@ body{isolation:isolate}
 #brief-liquid-metal{opacity:0;transition:opacity .5s}
 #brief-backdrop.has-webgl #brief-liquid-metal{opacity:1}
 .brief-backdrop-veil{background:linear-gradient(110deg,#e9e7e333,#f1f0eb0d 60%,#b4b5b526)}
-.site-header.studio-header{height:60px;max-width:1160px;width:calc(100% - 8vw);margin:16px auto 0;padding:0 26px;border:1px solid #ffffffa6;border-radius:18px;background:#f4f3efb8;box-shadow:0 8px 32px #35332e0d,inset 0 1px 0 #fff9;color:#2b2b28;-webkit-backdrop-filter:blur(22px) saturate(125%);backdrop-filter:blur(22px) saturate(125%)}
-.studio-header .header-note{color:#706b62;border-color:#706b6233}
-.studio-header nav{color:#6b665f}.studio-header nav .nav-active,.studio-header nav a:hover{color:#24221e;text-shadow:0 0 15px #c2a57944}
-.studio-header #nav-indicator{background:#927952;bottom:9px}
-#studio.page-brief{background:transparent;border:0;min-height:calc(100svh - 76px);padding:22px max(calc((100vw - 1160px)/2),4vw) 12px}
+#studio.page-brief{background:transparent;border:0;min-height:calc(100svh - 60px);padding:22px max(calc((100vw - 1160px)/2),4vw) 12px}
 .page-brief .studio-intro{display:none}
 #studio.page-brief .workspace{max-width:1160px;padding-top:0}
-#studio.page-brief .brief{padding:26px 30px;border-radius:26px;border:1px solid #ffffffe0;background:linear-gradient(125deg,#faf9f5b8,#f5f4f080 65%,#eeebe4a6);color:#302f2b;box-shadow:0 22px 65px #272a2b1c,inset 0 1px 0 #fff,inset 0 -1px 0 #ffffff80;-webkit-backdrop-filter:blur(30px) saturate(115%);backdrop-filter:blur(30px) saturate(115%)}
-.page-brief .brief .section-heading{padding-bottom:18px;border-color:#77736b2e;gap:20px;align-items:center}
-.page-brief .brief .step-label{color:#806b4c;font-size:9px;letter-spacing:2px}
-.page-brief .brief h2{color:#2c2c29;font-size:25px;letter-spacing:2px;margin-top:7px}
-.page-brief .brief-caption{margin:7px 0 0;color:#6f6a61;font-size:11px;letter-spacing:1px}
-#brief-motion-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;min-height:44px;padding:8px 15px;border:1px solid #ffffffc9;border-radius:30px;background:#ffffff5c;color:#62594d;font-size:11px;letter-spacing:.5px;box-shadow:0 3px 10px #3b302b05}
-#brief-motion-toggle:hover{background:#ffffffa6}
+#studio.page-brief .brief{padding:26px 30px;border-radius:26px;border:1px solid #e8dac038;background:linear-gradient(125deg,#171717d9,#272727bf 65%,#191919d1);color:#f5f4f0;box-shadow:0 22px 65px #0c0c0c33,inset 0 1px 0 #ffffff1f,inset 0 -1px 0 #ffffff08;-webkit-backdrop-filter:blur(30px) saturate(85%);backdrop-filter:blur(30px) saturate(85%)}
+.page-brief .brief .section-heading{padding-bottom:18px;border-color:#e8dac029;gap:20px;align-items:center}
+.page-brief .brief .step-label{color:#c7b18e;font-size:9px;letter-spacing:2px}
+.page-brief .brief h2{color:#f5f4f0;font-size:25px;letter-spacing:2px;margin-top:7px}
+.page-brief .brief-caption{margin:7px 0 0;color:#bdbbb6;font-size:11px;letter-spacing:1px}
+#brief-motion-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;min-height:44px;padding:8px 15px;border:1px solid #e8dac040;border-radius:30px;background:#ffffff08;color:#d9d3c8;font-size:11px;letter-spacing:.5px;box-shadow:0 3px 10px #3b302b05}
+#brief-motion-toggle:hover{background:#ffffff14}
 .page-brief .brief form{margin-top:21px}
-.page-brief .brief label{color:#3e3b35;font-size:12px;letter-spacing:.5px;font-weight:500}
-.page-brief .brief .required{color:#8b6a39}.page-brief .brief .optional,.page-brief .brief .count{color:#746e63}
-.page-brief .brief .hint,.page-brief .brief .form-footnote{color:#6a655b}
-.page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{border:1px solid #ffffffd9;border-radius:12px;background:#ffffff5c;color:#302f2b;box-shadow:inset 0 1px 3px #45403908,0 1px 0 #57534b0d;color-scheme:light;transition:background .2s,border-color .2s,box-shadow .2s}
-.page-brief .brief input::placeholder,.page-brief .brief textarea::placeholder{color:#7c776f}
-.page-brief .brief input:focus,.page-brief .brief select:focus,.page-brief .brief textarea:focus{background:#ffffffe0;border-color:#a68e66;box-shadow:0 0 0 3px #b79d6f26}
-.page-brief .brief select option{color:#302f2b;background:#f6f5f0}
-.page-brief .password-wrap>span{color:#9c825a}
-.page-brief #generate-button{border-radius:12px;border:1px solid #d4bc9480;background:linear-gradient(110deg,#d7c09a,#f1e4ca 50%,#dac39e);color:#3e3222;box-shadow:inset 0 1px #fff9,0 5px 16px #8f744a1c;letter-spacing:2px}
-.page-brief #generate-button:hover{background:linear-gradient(110deg,#e0c9a5,#f8edd8 50%,#e1caa5);box-shadow:inset 0 1px #fff,0 8px 20px #8f744a29}
-.page-brief .current-run-link{position:static;width:fit-content;margin:14px 0 0;padding:8px 14px;min-height:44px;border-radius:10px;border-color:#a98b584a;background:#fff8;color:#6a5330}
+.page-brief .brief label{color:#e7e4de;font-size:12px;letter-spacing:.5px;font-weight:500}
+.page-brief .brief .required{color:#c7b18e}.page-brief .brief .optional,.page-brief .brief .count{color:#bdbbb6}
+.page-brief .brief .hint,.page-brief .brief .form-footnote{color:#bdbbb6}
+.page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{border:1px solid #ffffff29;border-radius:12px;background:#ffffff06;color:#f5f4f0;box-shadow:inset 0 1px 3px #0000000d;color-scheme:dark;transition:background .2s,border-color .2s,box-shadow .2s}
+.page-brief .brief input::placeholder,.page-brief .brief textarea::placeholder{color:#aaa8a3}
+.page-brief .brief input:focus,.page-brief .brief select:focus,.page-brief .brief textarea:focus{background:#ffffff0f;border-color:#c7b18e;box-shadow:0 0 0 3px #c7b18e1c}
+.page-brief .brief select option{color:#f5f4f0;background:#252525}
+.page-brief .password-wrap>span{color:#c7b18e}
+.page-brief #generate-button{border-radius:12px;border:1px solid #d4bc9480;background:linear-gradient(110deg,#c7b18e,#e8dac0 50%,#cfb995);color:#3e3222;box-shadow:inset 0 1px #fff9,0 5px 16px #8f744a1c;letter-spacing:2px}
+.page-brief #generate-button:hover{background:linear-gradient(110deg,#d2bd9c,#f0e4ce 50%,#dbc5a3);box-shadow:inset 0 1px #fff,0 8px 20px #8f744a29}
+.page-brief .current-run-link{position:static;width:fit-content;margin:14px 0 0;padding:8px 14px;min-height:44px;border-radius:10px;border-color:#a98b584a;background:#ffffff09;color:#e8dac0}
 #studio.page-brief footer{border-color:#ffffff91;margin-top:16px;padding:10px 4px;color:#56524b}
 .page-brief .footer-brand{font-size:15px;color:#49443b}.page-brief .back-top{color:#56524b}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  #studio.page-brief .brief{background:#eeede8f5}.site-header.studio-header{background:#f1f0ebf5}
+  #studio.page-brief .brief{background:#232323f5}
 }
 @media(min-width:981px) and (max-height:800px){
-  .site-header.studio-header{margin-top:12px}
-  #studio.page-brief{padding-top:14px;min-height:calc(100svh - 72px)}
+  #studio.page-brief{padding-top:14px;min-height:calc(100svh - 60px)}
   #studio.page-brief .brief{padding:18px 26px}
   .page-brief .brief .section-heading{padding-bottom:10px}.page-brief .brief h2{font-size:22px}
   .page-brief .brief-caption{margin-top:5px}
@@ -324,12 +319,8 @@ body{isolation:isolate}
   #brief-backdrop img{object-position:58% center}
 }
 @media(max-width:760px){
-  .site-header.studio-header{height:96px;width:calc(100% - 24px);margin-top:12px;padding:4px 14px;border-radius:18px;gap:0 10px}
-  .studio-header #nav-indicator{bottom:3px}
-  .studio-header .header-note{padding-left:10px;font-size:6px;letter-spacing:.7px}
-  .studio-header nav{gap:22px}
-  #studio.page-brief{min-height:calc(100svh - 108px);padding:16px 12px}
-  #studio.page-brief .brief{padding:22px 18px;border-radius:22px;background:linear-gradient(125deg,#faf9f5dc,#f2f0e8c9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  #studio.page-brief{min-height:calc(100svh - 96px);padding:16px 12px}
+  #studio.page-brief .brief{padding:22px 18px;border-radius:22px;background:linear-gradient(125deg,#171717eb,#252525dc);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
   .page-brief .brief .section-heading{align-items:start;flex-wrap:wrap;padding-bottom:18px}
   .page-brief .brief h2{font-size:23px;letter-spacing:1px}
   .page-brief .brief .step-label{font-size:8px;letter-spacing:1.4px}
