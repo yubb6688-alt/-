@@ -19,6 +19,9 @@ function showPage(page, focus = false) {
   const home = page === 'home';
   const result = page === 'result';
   const archive = page === 'archive';
+  const brief = !home && !result && !archive;
+  $('brief-backdrop').hidden = !brief;
+  $('top').className = brief ? 'site-header studio-header' : 'site-header';
   $('home-page').hidden = !home;
   $('archive-page').hidden = !archive;
   $('studio').hidden = home || archive;
@@ -42,7 +45,11 @@ function pageFromHash() {
 }
 window.addEventListener('hashchange', () => showPage(pageFromHash(), true));
 window.addEventListener('resize', updateNavIndicator);
-window.addEventListener('load', updateNavIndicator);
+window.addEventListener('load', () => {
+  updateNavIndicator();
+  // A direct #studio link must not let native anchor scrolling crop the masthead.
+  if (pageFromHash() === 'studio') $('top').scrollIntoView({ block: 'start', behavior: 'instant' });
+});
 showPage(pageFromHash());
 
 for (const name of ['audience', 'shot']) $(name).addEventListener('input', () => {

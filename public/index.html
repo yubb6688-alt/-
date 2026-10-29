@@ -3,10 +3,15 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111111"><meta name="description" content="选好商品、写清受众，一次生成小红书笔记、抖音口播和详情页文案，还可按需生成配图与视频。">
-  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261029-archive1" defer></script><script src="/liquid-metal.js?v=20261027-mobile2" defer></script><link rel="stylesheet" href="/metal.css?v=20261029-header2">
+  <title>SEED STUDIO · 灵感，自由流动</title><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js?v=20261029-glass1" defer></script><script src="/liquid-metal.js?v=20261029-glass1" defer></script><link rel="stylesheet" href="/metal.css?v=20261029-glass1">
 </head>
 <body>
   <noscript><p class="noscript-notice">请启用浏览器 JavaScript 后使用内容生成功能。封面仍可正常浏览。</p></noscript>
+  <div id="brief-backdrop" hidden aria-hidden="true">
+    <picture><source srcset="/hero-liquid-cover.webp" type="image/webp"><img src="/hero-liquid-cover.jpg" width="1942" height="809" alt="" decoding="async"></picture>
+    <canvas id="brief-liquid-metal"></canvas>
+    <div class="brief-backdrop-veil"></div>
+  </div>
   <header class="site-header" id="top">
     <a href="#top" class="brand" aria-label="SEED STUDIO 首页"><img class="brand-mark" src="/logo.svg" width="40" height="40" alt=""><span class="brand-wordmark">SEED STUDIO</span></a>
     <span class="header-note" title="AI 内容创作工作室">AI CONTENT STUDIO</span>
@@ -31,7 +36,7 @@
     </section>
     <div class="workspace">
 
-      <section id="brief-page" class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">THE BRIEF / 创作需求</span><h2 id="brief-title" tabindex="-1">这次，为谁种草？</h2></div><span class="panel-number" aria-hidden="true">01</span></div>
+      <section id="brief-page" class="brief panel" aria-labelledby="brief-title"><div class="section-heading"><div><span class="step-label">THE BRIEF / 创作需求</span><h2 id="brief-title" tabindex="-1">这次，为谁种草？</h2><p class="brief-caption">一点灵感，一整套表达。</p></div><button type="button" id="brief-motion-toggle" aria-pressed="false" aria-label="暂停液态金属动画"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path class="pause-icon" d="M3 2v8M9 2v8" stroke="currentColor" stroke-width="1.5"/><path class="play-icon" d="m3 1 7 5-7 5Z" fill="currentColor"/></svg><span>暂停动态</span></button></div>
         <a id="current-run-link" class="current-run-link" href="#result" hidden>查看生成进度 →</a>
         <form id="generate-form">
           <fieldset id="form-fields">

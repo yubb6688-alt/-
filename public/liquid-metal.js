@@ -116,6 +116,16 @@ function createLiquidSculpture(canvas, root, toggle, preview = false, requested 
     toggle.hidden = true;
     return;
   }
+  // A hidden page does not allocate a GPU context until it is actually opened.
+  if (root.hidden && !requested) {
+    const pending = new MutationObserver(() => {
+      if (root.hidden) return;
+      pending.disconnect();
+      createLiquidSculpture(canvas, root, toggle, preview);
+    });
+    pending.observe(root, { attributes: true, attributeFilter: ['hidden'] });
+    return;
+  }
   if (!requested && (lightweight || reducedMotion.matches)) {
     toggle.setAttribute('aria-pressed', 'true');
     toggle.setAttribute('aria-label', `播放${preview ? '预览动画' : '液态金属动画'}`);
@@ -127,7 +137,7 @@ function createLiquidSculpture(canvas, root, toggle, preview = false, requested 
   let gl;
   try { gl = canvas.getContext('webgl', { alpha: preview, antialias: false, powerPreference: 'low-power' }); }
   catch { toggle.hidden = true; return; }
-  const frameInterval = 1000 / (lightweight ? 20 : preview ? 30 : 60);
+  const frameInterval = 1000 / (lightweight ? 20 : preview || canvas.id === 'brief-liquid-metal' ? 30 : 60);
   let paused = false;
   let visible = true;
   let frame = 0;
@@ -251,5 +261,6 @@ if (gl) {
 
 }
 createLiquidSculpture(document.querySelector('#liquid-metal'), document.querySelector('.metal-hero'), document.querySelector('#motion-toggle'));
+createLiquidSculpture(document.querySelector('#brief-liquid-metal'), document.querySelector('#brief-backdrop'), document.querySelector('#brief-motion-toggle'));
 createLiquidSculpture(document.querySelector('#studio-liquid-metal'), document.querySelector('#studio-visual'), document.querySelector('#studio-motion-toggle'), true);
 })();

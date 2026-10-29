@@ -34,13 +34,18 @@ test('home, brief and result are separate screens; navigation preserves an activ
   const ui = setup();
   assert.equal(ui.get('home-page').hidden, false);
   assert.equal(ui.get('studio').hidden, true);
+  assert.equal(ui.get('brief-backdrop').hidden, true);
   ui.context.location.hash = '#studio'; ui.context.window.handlers.hashchange();
+  assert.equal(ui.get('brief-backdrop').hidden, false);
+  assert.equal(ui.get('top').className, 'site-header studio-header');
   assert.equal(ui.get('home-page').hidden, true);
   assert.equal(ui.get('brief-page').hidden, false);
   assert.equal(ui.get('result-page').hidden, true);
   ui.get('audience').value = '上班族';
   await ui.get('generate-form').handlers.submit({ preventDefault() {} });
   assert.equal(ui.context.location.hash, '#result');
+  assert.equal(ui.get('brief-backdrop').hidden, true);
+  assert.equal(ui.get('top').className, 'site-header');
   assert.equal(ui.get('brief-page').hidden, true);
   assert.equal(ui.get('result-page').hidden, false);
   ui.context.location.hash = '#studio'; ui.context.window.handlers.hashchange();

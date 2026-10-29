@@ -15,9 +15,10 @@ function setup({ noWebGL = false, deferImage = false, mobile = false, userAgent 
     setAttribute(name, value) { this.attributes[name] = value; },
     querySelector() { return this; },
   });
-  for (const selector of ['#liquid-metal', '.metal-hero', '#motion-toggle', '#studio-liquid-metal', '#studio-visual', '#studio-motion-toggle']) elements.set(selector, element());
-  for (const selector of ['#liquid-metal', '#studio-liquid-metal']) {
-    const canvas = elements.get(selector); canvas.draws = 0; canvas.contexts = 0;
+  for (const selector of ['#liquid-metal', '.metal-hero', '#motion-toggle', '#studio-liquid-metal', '#studio-visual', '#studio-motion-toggle', '#brief-liquid-metal', '#brief-backdrop', '#brief-motion-toggle']) elements.set(selector, element());
+  elements.get('#brief-backdrop').hidden = true;
+  for (const selector of ['#liquid-metal', '#studio-liquid-metal', '#brief-liquid-metal']) {
+    const canvas = elements.get(selector); canvas.id = selector.slice(1); canvas.draws = 0; canvas.contexts = 0;
     canvas.getContext = () => { canvas.contexts++; return noWebGL ? null : new Proxy({}, { get: (_, name) => {
       if (['getShaderParameter', 'getProgramParameter'].includes(name)) return () => true;
       if (name === 'isContextLost') return () => false;
@@ -36,7 +37,7 @@ function setup({ noWebGL = false, deferImage = false, mobile = false, userAgent 
       ...(legacyMedia ? { addListener() {} } : { addEventListener() {} }) }),
     requestAnimationFrame: callback => { frames.set(++id, callback); return id; }, cancelAnimationFrame: id => frames.delete(id),
     ResizeObserver: missingObservers ? undefined : class { observe() {} },
-    MutationObserver: class { constructor(callback) { this.callback = callback; } observe(root) { mutations.set(root, this.callback); } },
+    MutationObserver: class { constructor(callback) { this.callback = callback; } observe(root) { this.root=root; mutations.set(root, this.callback); } disconnect() { mutations.delete(this.root); } },
     IntersectionObserver: class { constructor(callback) { this.callback = callback; } observe(root) { intersections.set(root, this.callback); } },
   });
   let now = 0;
@@ -134,4 +135,25 @@ test('studio rendering is capped at 30 fps on high-refresh displays', () => {
   for (let i = 0; i < 120; i++) ui.tick(1000 / 120);
   assert.ok(preview.draws - before <= 31);
   assert.ok(preview.draws - before >= 29);
+});
+
+test('brief background is lazy, capped at 30 fps, and stops when leaving the form', () => {
+  const ui = setup(), root = ui.elements.get('#brief-backdrop'), canvas = ui.elements.get('#brief-liquid-metal');
+  assert.equal(canvas.contexts, 0);
+  root.hidden = false; ui.mutations.get(root)();
+  assert.equal(canvas.contexts, 1);
+  ui.tick(); const before = canvas.draws;
+  for (let i = 0; i < 120; i++) ui.tick(1000 / 120);
+  assert.ok(canvas.draws - before >= 29 && canvas.draws - before <= 31);
+  root.hidden = true; ui.mutations.get(root)();
+  const stopped = canvas.draws; ui.tick(); assert.equal(canvas.draws, stopped);
+  root.hidden = false; ui.mutations.get(root)(); ui.tick();
+  assert.equal(canvas.contexts, 1); assert.ok(canvas.draws > stopped);
+  for (const options of [{ mobile: true }, { reduced: true }]) {
+    const light = setup(options), backdrop = light.elements.get('#brief-backdrop'), surface = light.elements.get('#brief-liquid-metal');
+    backdrop.hidden = false; light.mutations.get(backdrop)();
+    assert.equal(surface.contexts, 0);
+    light.elements.get('#brief-motion-toggle').handlers.click();
+    assert.equal(surface.contexts, 1);
+  }
 });
