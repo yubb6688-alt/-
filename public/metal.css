@@ -296,6 +296,7 @@ body{isolation:isolate}
 .page-brief #generate-button:hover{background:linear-gradient(110deg,#d2bd9c,#f0e4ce 50%,#dbc5a3);box-shadow:inset 0 1px #fff,0 8px 20px #8f744a29}
 .page-brief .current-run-link{position:static;width:fit-content;margin:14px 0 0;padding:8px 14px;min-height:44px;border-radius:10px;border-color:#a98b584a;background:#f4f3f080;color:#55452d}
 #studio.page-brief footer{border-color:#35353533;margin-top:16px;padding:10px 4px;color:#56524b}
+@media(min-width:981px){#studio.page-brief footer{margin-top:36px}}
 .page-brief .footer-brand{font-size:15px;color:#49443b}.page-brief .back-top{color:#56524b}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .page-brief .brief input,.page-brief .brief select,.page-brief .brief textarea{background:#e9e8e2e6}
