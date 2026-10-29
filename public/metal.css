@@ -208,3 +208,22 @@ button:focus-visible,a:focus-visible{outline-color:#bca47e}
   #studio.page-brief .workspace{padding-top:16px}
   #studio.page-brief footer{margin-top:8px}
 }
+
+/* Half-size brand signature, with a full-size touch target and a quiet masthead. */
+.site-header{height:72px;gap:32px}
+.site-header .brand{gap:6px;min-height:44px}
+.site-header .brand-mark{width:16.5px;height:16.5px}
+.site-header .brand-wordmark{font-size:13.5px;letter-spacing:.8px}
+.site-header nav{gap:32px}
+.site-header .header-note{margin-left:0;padding-left:26px;border-left:1px solid #e8dac033;min-height:24px;font-size:8px;letter-spacing:1.8px;white-space:nowrap}
+#nav-indicator{bottom:16px}
+#studio{min-height:calc(100svh - 72px)}
+@media(max-width:760px){
+  .site-header{height:64px;gap:16px}
+  .site-header nav{gap:0}
+  .site-header nav a{min-height:44px;font-size:11px}
+  #nav-indicator{bottom:12px}
+  #studio{min-height:calc(100svh - 64px)}
+  .metal-hero{height:min(720px,calc(100svh - 64px))}
+}
+@media(max-height:500px) and (orientation:landscape){.metal-hero{height:460px}}
