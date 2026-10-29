@@ -334,3 +334,19 @@ body{isolation:isolate}
 #home-page{height:calc(100vh - 60px);height:calc(100dvh - 60px);min-height:520px;max-height:none}
 @media(max-width:760px){#home-page{height:calc(100vh - 96px);height:calc(100dvh - 96px);min-height:570px}}
 @media(max-height:500px) and (orientation:landscape){#home-page{min-height:460px}}
+
+/* Accessible custom menus, matching the silver and champagne workbench. */
+.studio-select{position:relative;min-width:0}
+.studio-select.is-open{z-index:20}
+.page-brief .select-trigger{width:100%;min-height:46px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:14px;border:0;border-bottom:1px solid #4b49455c;border-radius:0;background:#f4f3f05c;color:#202020;font:inherit;font-size:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.page-brief .select-trigger:focus-visible,.studio-select.is-open .select-trigger{outline:2px solid #a18a68;outline-offset:2px;background:#f4f3f0b3}
+.select-chevron{width:7px;height:7px;border-right:1px solid #6f604a;border-bottom:1px solid #6f604a;transform:rotate(45deg);margin-right:4px;margin-top:-4px;transition:transform .18s}
+.is-open .select-chevron{transform:rotate(225deg);margin-top:4px}
+.select-options{position:absolute;top:calc(100% + 8px);left:0;right:0;padding:6px;border:1px solid #ffffffb3;border-radius:12px;background:#efede7f5;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 12px 32px #27231c29,inset 0 1px 0 #fff8;color:#292723}
+.select-option{position:relative;display:flex;align-items:center;min-height:44px;padding:10px 36px 10px 14px;border-radius:7px;font-size:14px;line-height:1.5;cursor:pointer}
+.select-option[aria-selected="true"]{background:linear-gradient(110deg,#d4bf9a99,#e8dac0cc);color:#493a25}
+.select-option[aria-selected="true"]::after{content:'✓';position:absolute;right:14px;color:#806641;font-size:15px}
+.select-option.is-active,.select-option:hover{box-shadow:inset 0 0 0 1px #ad956f8c;background-color:#daceb94d}
+@media(min-width:981px){.page-brief .select-trigger{height:43px;min-height:43px;padding:10px 12px;font-size:14px}}
+@media(max-width:760px){.select-option{font-size:16px;min-height:48px}}
+@media(prefers-reduced-motion:reduce){.select-chevron{transition:none}}

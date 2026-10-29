@@ -10,6 +10,7 @@ const limiter = createLimiter(fileURLToPath(new URL('./.data/limits.sqlite', imp
 const assets = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/select-menu.js', ['select-menu.js', 'text/javascript; charset=utf-8']],
   ['/style.css', ['style.css', 'text/css; charset=utf-8']],
   ['/metal.css', ['metal.css', 'text/css; charset=utf-8']],
   ['/liquid-metal.js', ['liquid-metal.js', 'text/javascript; charset=utf-8']],
