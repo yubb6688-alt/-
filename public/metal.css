@@ -352,3 +352,9 @@ body{isolation:isolate}
 @media(min-width:981px){.page-brief .select-trigger{height:43px;min-height:43px;padding:10px 12px;font-size:14px}}
 @media(max-width:760px){.select-option{font-size:16px;min-height:48px}}
 @media(prefers-reduced-motion:reduce){.select-chevron{transition:none}}
+
+/* The content selector echoes the campaign field with an extending gold underline. */
+.page-brief #want-trigger{position:relative;box-shadow:none}
+#want-trigger::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:#806641;transform:scaleX(0);transform-origin:left;transition:transform .3s ease;pointer-events:none}
+#want-trigger:focus::after,.studio-select.is-open #want-trigger::after{transform:scaleX(1)}
+@media(prefers-reduced-motion:reduce){#want-trigger::after{transition:none}}
